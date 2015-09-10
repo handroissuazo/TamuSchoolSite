@@ -10,17 +10,21 @@ $( document ).ready(function() {
         "Home":     [false, '#CenterContent']
     };
 
+    var bIsMenuShowing = false;
+
     //Initialization Functions
     eventHandlerInit();
 
     // DOM Manipulation
     function dom_showMenu()
     {
+        bIsMenuShowing = true;
         $('#fixedMenu').fadeIn(500);
     }
 
     function dom_hideMenu()
     {
+        bIsMenuShowing = false;
         $('#fixedMenu').fadeOut(500);
     }
 
@@ -51,16 +55,16 @@ $( document ).ready(function() {
             if (MenuItems[key][0] == false)
             {
                 var oldContent = $(MenuItems[key][1]);
-                oldContent.fadeOut(500);
-            }
-        }
-
-        for (var key in MenuItems)              // Look for selected content and show it.
-        {
-            if (initialText == key)
-            {
-                var newContent = $(MenuItems[key][1]);
-                newContent.fadeIn(500);
+                oldContent.fadeOut(500, function ()
+                {
+                    for (var key in MenuItems)              // Look for selected content and show it. This is within the fadeOut so the fade in will happen after the fade out.
+                    {
+                        if (initialText == key) {
+                            var newContent = $(MenuItems[key][1]);
+                            newContent.fadeIn(500);
+                        }
+                    }
+                });
             }
         }
     }
@@ -90,7 +94,13 @@ $( document ).ready(function() {
     {
         $('#fixedMenuButton').mousedown(  function()
             {
-                dom_showMenu()
+                if (!bIsMenuShowing) {
+                    dom_showMenu();
+                }
+                else
+                {
+                    dom_hideMenu();
+                }
             }
         );
 
