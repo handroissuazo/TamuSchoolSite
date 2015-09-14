@@ -293,6 +293,44 @@ body
     margin-top: 15px;
 }
 
+#Reasons
+{
+    position: fixed;
+    bottom: 10px;
+    right: 150px;
+    width: 500px;
+    height: 50px;
+    text-overflow: ellipsis;
+    padding-left: 10px;
+    z-index: 10000;
+    background-color: aliceblue;
+
+    -webkit-box-shadow: 10px 10px 31px -7px rgba(0,0,0,0.75);
+    -moz-box-shadow: 10px 10px 31px -7px rgba(0,0,0,0.75);
+    -o-box-shadow: 10px 10px 31px -7px rgba(0,0,0,0.75);
+    box-shadow: 10px 10px 31px -7px rgba(0,0,0,0.75);
+
+    -webkit-transition: width 0.3s ease;
+    -moz-transition: width 0.3s ease;
+    -o-transition: width 0.3s ease;
+    transition: width 0.3s ease;
+
+    -webkit-transition: height 0.3s ease;
+    -moz-transition: height 0.3s ease;
+    -o-transition: height 0.3s ease;
+    transition: height 0.3s ease;
+}
+
+#Reasons:hover
+{
+    height: 500px;
+
+    -webkit-transition: height 0.3s ease;
+    -moz-transition: height 0.3s ease;
+    -o-transition: height 0.3s ease;
+    transition: height 0.3s ease;
+}
+
 /* Super specific element stuff (this exists because the assignment noted in the coding standards section: "Put all of
     your style declarations into a separate .css file. Access them in your HTML via the class attribute, the name
     attribute, or through HTML element level declarations")
