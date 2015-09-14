@@ -517,3 +517,67 @@ body
     font-weight: 100;
     margin-bottom: 4px;
 }
+
+.MAC .Description
+{
+    font-size: 9.1px;
+    letter-spacing: 0.3px;
+    line-height: 11px;
+}
+
+.MAC .FirstRowImageDescriptions
+{
+    width: 105px !important;
+    font-size: 12px !important;
+    margin-left: 4px !important;
+    margin-top: 4px !important;
+    line-height: 15px;
+    letter-spacing: -0.1px;
+}
+
+.MAC #FirstRowLastDescription
+{
+    width: 120px !important;
+    font-size: 12.5px !important;
+    margin-left: 4px !important;
+    margin-top: 4px !important;
+    line-height: 15px;
+    letter-spacing: 0px;
+}
+
+.MAC #SecondRowFirstDescription
+{
+    width: 110px !important;
+    font-size: 12px !important;
+    margin-left: 4px !important;
+    margin-top: 3.5px !important;
+    line-height: 15px;
+    letter-spacing: -0.1px;
+}
+
+.MAC .SecondRowDescriptions
+{
+    width: 110px !important;
+    font-size: 12px !important;
+    margin-left: 4px !important;
+    margin-top: 3.5px !important;
+    line-height: 15px;
+    letter-spacing: -0.1px;
+}
+
+.MAC #SecondRowLastDescription
+{
+    width: 105px !important;
+    font-size: 12.5px !important;
+    margin-left: 8px !important;
+    margin-top: 3.5px !important;
+    line-height: 15px;
+    letter-spacing: 0px;
+}
+
+.MAC #ContactInformationLink,
+.MAC #CopyrightInformation
+{
+    letter-spacing: 0.1px;
+}
+

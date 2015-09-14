@@ -6,6 +6,11 @@ document.addEventListener('DOMContentLoaded', function () {
         ChangeBodyBackground();
     });
 
+    var body = document.getElementsByTagName("body");
+    if (navigator.userAgent.indexOf('Mac OS X') != -1) {
+        body[0].classList.add("MAC");
+    }
+
     function ChangeBodyBackground()
     {
         var backgroundDiv = document.getElementById("BackgroundDiv");
