@@ -256,6 +256,38 @@ p
     display: inline-block;
 }
 
+#PersonalDescription
+{
+    font-family: fff_tusjbold;
+    font-size: 20px;
+}
+
+#UnderConstruction
+{
+    font-family: fff_tusjbold;
+    font-size: 20px;
+    text-align: center;
+    color: white;
+    position: absolute;
+    top: 40px;
+    right: 40px;
+    -webkit-transform: rotate(-10deg);
+    -moz-transform: rotate(-10deg);
+    -ms-transform: rotate(-10deg);
+    -o-transform: rotate(-10deg);
+}
+
+#CautionPicture
+{
+    position: absolute;
+    top: 40px;
+    right: 40px;
+    -webkit-transform: rotate(10deg);
+    -moz-transform: rotate(10deg);
+    -ms-transform: rotate(10deg);
+    -o-transform: rotate(10deg);
+}
+
 @media screen and (min-width: 1050px) 
 {
     #sideBar
