@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', function () {
     function ChangeBodyBackground()
     {
         var backgroundDiv = document.getElementById("BackgroundDiv");
+        var MineDiv = document.getElementById("Mine");
+        var OriginalDiv = document.getElementById("Original");
 
         if (backgroundDiv.classList == null)
         {
@@ -17,6 +19,24 @@ document.addEventListener('DOMContentLoaded', function () {
         else
         {
             backgroundDiv.classList.toggle("BodyBackgroundFill");
+        }
+
+        if (MineDiv.classList == null)
+        {
+            MineDiv.classList.add("ShowWord");
+        }
+        else
+        {
+            MineDiv.classList.toggle("ShowWord");
+        }
+
+        if (OriginalDiv.classList == null)
+        {
+            OriginalDiv.classList.add("ShowWord");
+        }
+        else
+        {
+            OriginalDiv.classList.toggle("ShowWord");
         }
     }
 
