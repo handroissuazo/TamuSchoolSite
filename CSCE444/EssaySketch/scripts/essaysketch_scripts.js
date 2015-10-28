@@ -29,9 +29,61 @@ $( document ).ready(function() {
     myCanvas[0].style.height = canvasHeight + "px";
 
 
-
-    drawContent($(myCanvas));
+    drawIntroContent(myCanvas);
+    //drawContent($(myCanvas));
 });
+
+function drawIntroContent(myCanvas)
+{
+    myCanvas.drawImage({
+        layer: true,
+        fromCenter: false,
+        draggable: true,
+        groups: ['nodes'],
+        dragGroups: ['nodes'],
+        source: 'images/Enter.png',
+        x: 10, y: 10,
+        scale: 1,
+        click: function(layer) {
+            // Spin star
+            $(this).animateLayer(layer, {
+                opacity: '0', //This works
+                scale: 2
+            });
+            drawContentBackground(myCanvas);
+        }
+    }).drawLayers();
+}
+
+function drawContentBackground(myCanvas)
+{
+    myCanvas.drawImage({
+        layer: true,
+        fromCenter: false,
+        draggable: true,
+        groups: ['nodes'],
+        dragGroups: ['nodes'],
+        source: 'images/backpalette.jpg',
+        x: 0, y: 0,
+        scale: 2,
+        opacity: 0,
+        load: function(layer) {
+            // Spin star
+            $(this).animateLayer(layer, {
+                opacity: '1' //This works
+            });
+        },
+        click: function(layer) {
+            // Spin star
+            var posX = layer.x - 200;
+            var posY = layer.y - 200;
+            $(this).animateLayer(layer, {
+                x: posX, //This works
+                y: posY
+            });
+        }
+    }).drawLayers();
+}
 
 function drawContent(myCanvas)
 {
