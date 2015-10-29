@@ -31,11 +31,11 @@ $( document ).ready(function() {
     myCanvas[0].style.height = canvasHeight + "px";
 
 
-    drawIntroContent(myCanvas);
+    drawIntroContent();
     //drawContent($(myCanvas));
 });
 
-function drawIntroContent(myCanvas)
+function drawIntroContent()
 {
     myCanvas.drawImage({
         layer: true,
@@ -60,7 +60,7 @@ function drawIntroContent(myCanvas)
                 opacity: 0,
                 scale: 2
             }).drawLayers();
-            drawContentBackground(myCanvas, 'Teachers');
+            drawContentBackground('Teachers');
         }
     }).drawLayers();
 
@@ -77,7 +77,7 @@ function drawIntroContent(myCanvas)
                 opacity: 0,
                 scale: 2
             }).drawLayers();
-            drawContentBackground(myCanvas, 'Unions');
+            drawContentBackground('Unions');
         }
     }).drawLayers();
 
@@ -94,7 +94,7 @@ function drawIntroContent(myCanvas)
                 opacity: 0,
                 scale: 2
             }).drawLayers();
-            drawContentBackground(myCanvas, 'Students');
+            drawContentBackground('Students');
         }
     }).drawLayers();
 
@@ -111,32 +111,15 @@ function drawIntroContent(myCanvas)
                 opacity: 0,
                 scale: 2
             }).drawLayers();
-            drawContentBackground(myCanvas, 'Government');
+            drawContentBackground('Government');
         }
     }).drawLayers();
 }
 
-function drawContentBackground(myCanvas, nodeString)
+function drawContentBackground(nodeString)
 {
     var Xpos = 0;
     var Ypos = 0;
-
-    // This is to decide the position of the background
-    switch (nodeString){
-        case 'Teachers':
-            Xpos = -600;
-            Ypos = 400;
-            break;
-        case 'Students':
-
-            break;
-        case 'Unions':
-
-            break;
-        case 'Government':
-
-            break;
-    }
 
     myCanvas.drawImage({
         layer: true,
@@ -146,7 +129,8 @@ function drawContentBackground(myCanvas, nodeString)
         dragGroups: ['content'],
         source: 'images/backpalette.jpg',
         x: 800, y: 800,
-        scale: 3
+        scale: 3,
+        opacity: 0
     }).drawLayers();
 
     myCanvas.drawImage({
@@ -157,7 +141,8 @@ function drawContentBackground(myCanvas, nodeString)
         dragGroups: ['content'],
         source: "images/Teachers.png",
         x: 2600, y: -50,
-        scale: 1
+        scale: 1,
+        opacity: 0
     }).drawLayers();
 
     myCanvas.drawImage({
@@ -168,7 +153,8 @@ function drawContentBackground(myCanvas, nodeString)
         dragGroups: ['content'],
         source: "images/Unions.png",
         x: 450, y: -10,
-        scale: 1
+        scale: 1,
+        opacity: 0
     }).drawLayers();
 
     myCanvas.drawImage({
@@ -179,7 +165,8 @@ function drawContentBackground(myCanvas, nodeString)
         dragGroups: ['content'],
         source: "images/Students.png",
         x: -950, y: 1300,
-        scale: 1
+        scale: 1,
+        opacity: 0
     }).drawLayers();
 
     myCanvas.drawImage({
@@ -190,381 +177,402 @@ function drawContentBackground(myCanvas, nodeString)
         dragGroups: ['content'],
         source: "images/Government.png",
         x: 1000, y: 1500,
-        scale: 1
+        scale: 1,
+        opacity: 0
     }).drawLayers();
+
+    // This is to decide the position of the background
+    switch (nodeString){
+        case 'Teachers':
+            Xpos = -2500;
+            Ypos = 50;
+            break;
+        case 'Students':
+            Xpos = 1100;
+            Ypos = -1330;
+            break;
+        case 'Unions':
+            Xpos = -300;
+            Ypos = -30;
+            break;
+        case 'Government':
+            Xpos = -900;
+            Ypos = -1500;
+            break;
+    }
+
+    drawContent();
+
+    myCanvas.setLayerGroup('content', {
+        x: '+=' + Xpos,
+        y: '+=' + Ypos
+    }).animateLayerGroup('content', {
+        opacity: 1
+    }).drawLayers();
+
 }
 
-function drawContent(myCanvas)
+function drawContent()
 {
     // Draw Students
-    myCanvas.drawRect({
-        layer: true,
-        draggable: true,
-        groups: ['nodes'],
-        dragGroups: ['nodes'],
-        strokeStyle: '#c33',
-        strokeWidth: 4,
-        x: 305, y: 305,
-        width: 600,
-        height: 600
-    });
     myCanvas.drawText({
         layer: true,
         draggable: true,
-        groups: ['nodes'],
-        dragGroups: ['nodes'],
-        fillStyle: '#36c',
-        fontStyle: 'bold',
-        fontSize: '10pt',
-        fontFamily: 'Trebuchet MS, sans-serif',
-        text: 'Students',
-        x: 160, y: 20,
-        maxWidth: 300
-    }).restoreCanvas();
-
-    myCanvas.drawText({
-        layer: true,
-        draggable: true,
-        groups: ['nodes'],
-        dragGroups: ['nodes'],
-        fillStyle: '#36c',
+        groups: ['content'],
+        dragGroups: ['content'],
+        fillStyle: '#000',
         fontStyle: 'bold',
         fontSize: '10pt',
         fontFamily: 'Trebuchet MS, sans-serif',
         text: "Students have a agreed in an overwhelming majority that school doesn't engage them as much as it could. The problem stems from far more than teaching material. There is a seemingly complex labyrinth of information that cycles, turns, and confounds the issue of education the more it's traversed.",
-        x: 180, y: 100,
+        x: -370, y: 1600,
         maxWidth: 300
-    }).restoreCanvas();
-
-    myCanvas.drawText({
+    }).drawText({
         layer: true,
         draggable: true,
-        groups: ['nodes'],
-        dragGroups: ['nodes'],
-        fillStyle: '#36c',
+        groups: ['content'],
+        dragGroups: ['content'],
+        fillStyle: '#000',
         fontStyle: 'bold',
         fontSize: '10pt',
         fontFamily: 'Trebuchet MS, sans-serif',
         text: "Here we contrast the use of technology in two different settings, corresponding to socioeconomic conditions and how the perception of technology changes with perspective.",
-        x: 480, y: 250,
+        x: 40, y: 1880,
         maxWidth: 200
     }).restoreCanvas();
 
-    //
-
     myCanvas.drawImage({
         layer: true,
         draggable: true,
-        groups: ['nodes'],
-        dragGroups: ['nodes'],
+        fromCenter: false,
+        groups: ['content'],
+        dragGroups: ['content'],
         source: 'images/Coolidge2-1024x682.jpg',
-        x: 480, y: 100,
+        x: -470, y: 1400,
         scale: 0.2
-    }).drawLayers();
-
-    myCanvas.drawImage({
+    }).drawImage({
         layer: true,
         draggable: true,
-        groups: ['nodes'],
-        dragGroups: ['nodes'],
+        fromCenter: false,
+        groups: ['content'],
+        dragGroups: ['content'],
         source: 'images/Montessori-Based-Learning-Apps-Kids.jpg',
-        x: 480, y: 400,
+        x: -470, y: 1700,
         scale: 0.2
+    }).drawImage({
+        layer: true,
+        draggable: true,
+        fromCenter: false,
+        groups: ['content'],
+        dragGroups: ['content'],
+        source: 'images/BlueToGreen.png',
+        x: 0, y: 1350,
+        scale: 1,
+        click: function (){
+            myCanvas.animateLayerGroup('content', {
+                x: '-=1400',
+                y: '+=1300'
+            }).drawLayers();
+        }
+    }).drawImage({
+        layer: true,
+        draggable: true,
+        fromCenter: false,
+        groups: ['content'],
+        dragGroups: ['content'],
+        source: 'images/BlueToRed.png',
+        x: 200, y: 1580,
+        scale: 1,
+        click: function (){
+            myCanvas.animateLayerGroup('content', {
+                x: '-=2000',
+                y: '-=170'
+            }).drawLayers();
+        }
     }).drawLayers();
 
     // Draw Teachers ------------------------------------------
-    myCanvas.drawRect({
-        layer: true,
-        draggable: true,
-        groups: ['nodes'],
-        dragGroups: ['nodes'],
-        strokeStyle: '#FFFF00',
-        strokeWidth: 4,
-        x: 915, y: 305,
-        width: 600,
-        height: 600
-    });
     myCanvas.drawText({
         layer: true,
         draggable: true,
-        groups: ['nodes'],
-        dragGroups: ['nodes'],
-        fillStyle: '#36c',
-        fontStyle: 'bold',
-        fontSize: '10pt',
-        fontFamily: 'Trebuchet MS, sans-serif',
-        text: 'Teachers',
-        x: 770, y: 20,
-        maxWidth: 300
-    }).restoreCanvas();
-
-    myCanvas.drawText({
-        layer: true,
-        draggable: true,
-        groups: ['nodes'],
-        dragGroups: ['nodes'],
+        groups: ['content'],
+        dragGroups: ['content'],
         fillStyle: '#36c',
         fontStyle: 'bold',
         fontSize: '16pt',
         fontFamily: 'Trebuchet MS, sans-serif',
         text: '"When you see a great teacher, you are seeing a work of art." -Geoffrey Canada',
-        x: 900, y: 60,
+        x: 3230, y: 200,
         maxWidth: 500
     }).restoreCanvas();
 
     myCanvas.drawText({
         layer: true,
         draggable: true,
-        groups: ['nodes'],
-        dragGroups: ['nodes'],
+        groups: ['content'],
+        dragGroups: ['content'],
         fillStyle: '#36c',
         fontStyle: 'bold',
         fontSize: '10pt',
         fontFamily: 'Trebuchet MS, sans-serif',
         align: 'left',
         text: "This quote from Geoffrey Canada in the documentary Waiting for Superman describes the complexity and immensity of the job our teachers have. Canada's metaphor exposes the truth that teaching is an art. Teaching requires more than logic, statistics, exams, and grades. Teaching demands the melding of emotion, perception, aspiration to universally convey ideas to students with different backgrounds, intellect, and wants. Sequential and wrote styles of teaching are obviously not working. Introducing new teaching styles that conform to the hypertextual nature of the mind is key for student learning. Finding the balance to convey information in a progressive and exciting way for the students takes an artisan of the mind and a master of patience.",
-        x: 770, y: 240,
+        x: 3400, y: 380,
         maxWidth: 280
     }).restoreCanvas();
 
     myCanvas.drawText({
         layer: true,
         draggable: true,
-        groups: ['nodes'],
-        dragGroups: ['nodes'],
+        groups: ['content'],
+        dragGroups: ['content'],
         fillStyle: '#36c',
         fontStyle: 'bold',
         fontSize: '10pt',
         fontFamily: 'Trebuchet MS, sans-serif',
         align: 'left',
         text: "Traditional methods of teaching and the apathy that grows in american society are conducive to poor educational experiences for low income students. Students of all ages, learn actively through planning, participation, and problem solving, not through passive absorption of information and authority. The linearity and sequential nature of traditional learning doesn't appeal to learners minds. Learning is a complex experience with depth, breadth, and  connections that each human willingly makes unbound from the influence of money, politics, religion, and apathy.",
-        x: 1070, y: 240,
+        x: 3100, y: 380,
         maxWidth: 280
     }).restoreCanvas();
 
     myCanvas.drawText({
         layer: true,
         draggable: true,
-        groups: ['nodes'],
-        dragGroups: ['nodes'],
+        groups: ['content'],
+        dragGroups: ['content'],
         fillStyle: '#36c',
         fontStyle: 'bold',
         fontSize: '10pt',
         fontFamily: 'Trebuchet MS, sans-serif',
         align: 'left',
         text: "www.educationrevolution.org/store/product/onesize/",
-        x: 1000, y: 400,
+        x: 3230, y: 540,
         maxWidth: 580
     }).restoreCanvas();
 
     myCanvas.drawImage({
         layer: true,
         draggable: true,
-        groups: ['nodes'],
-        dragGroups: ['nodes'],
+        fromCenter: false,
+        groups: ['content'],
+        dragGroups: ['content'],
         source: 'images/los_angeles_tracy01.jpg',
-        x: 760, y: 490,
+        x: 2700, y: 490,
         scale: 0.4
     }).drawLayers();
-
-    // Draw Government ------------------------------------------
-    myCanvas.drawRect({
-        layer: true,
-        draggable: true,
-        groups: ['nodes'],
-        dragGroups: ['nodes'],
-        strokeStyle: '#008000',
-        strokeWidth: 4,
-        x: 305, y: 915,
-        width: 600,
-        height: 600
-    });
+    //
+    //// Draw Government ------------------------------------------
     myCanvas.drawText({
         layer: true,
         draggable: true,
-        groups: ['nodes'],
-        dragGroups: ['nodes'],
-        fillStyle: '#36c',
-        fontStyle: 'bold',
-        fontSize: '10pt',
-        fontFamily: 'Trebuchet MS, sans-serif',
-        text: 'U.S. Government',
-        x: 160, y: 630,
-        maxWidth: 300
-    }).restoreCanvas();
-
-    myCanvas.drawText({
-        layer: true,
-        draggable: true,
-        groups: ['nodes'],
-        dragGroups: ['nodes'],
-        fillStyle: '#36c',
+        groups: ['content'],
+        dragGroups: ['content'],
+        fillStyle: '#FFF',
         fontStyle: 'bold',
         fontSize: '10pt',
         fontFamily: 'Trebuchet MS, sans-serif',
         align: 'left',
         text: 'Is lack of money the main problem? NO. America spends on average more than most developed countries on education (we rank 4th in the world), but we rank low on educational aptitudes.',
-        x: 450, y: 710,
+        x: 1800, y: 1820,
         maxWidth: 300
     }).restoreCanvas();
 
     myCanvas.drawText({
         layer: true,
         draggable: true,
-        groups: ['nodes'],
-        dragGroups: ['nodes'],
-        fillStyle: '#36c',
+        groups: ['content'],
+        dragGroups: ['content'],
+        align: 'right',
+        fillStyle: '#FFF',
         fontStyle: 'bold',
         fontSize: '10pt',
         fontFamily: 'Trebuchet MS, sans-serif',
         text: "Nonetheless, students and teachers argue that standardized testing isn't properly measuring success. The federal government continues to try and measure students to subjective standards forgetting the originality and unique strengths and weaknesses of each student.",
-        x: 150, y: 910,
+        x: 1450, y: 2020,
         maxWidth: 280
     }).restoreCanvas();
 
     myCanvas.drawText({
         layer: true,
         draggable: true,
-        groups: ['nodes'],
-        dragGroups: ['nodes'],
-        fillStyle: '#36c',
+        groups: ['content'],
+        dragGroups: ['content'],
+        fillStyle: '#FFF',
         fontStyle: 'bold',
         fontSize: '10pt',
         fontFamily: 'Trebuchet MS, sans-serif',
         align: 'left',
         text: "The east coast clearly generates pro-education content and take action to improve our educational system. While on the other hand, the south continues to struggle with censorship, poverty, and stigmas. This is not to say that places like New York don't have underprivileged schools or students because they do and most of the positive content stems from the problems of schools in the north. The issue is that these positive endeavors aren't as prevalent in the south.",
-        x: 450, y: 910,
+        x: 1800, y: 2020,
         maxWidth: 280
     }).restoreCanvas();
 
     myCanvas.drawImage({
         layer: true,
         draggable: true,
-        groups: ['nodes'],
-        dragGroups: ['nodes'],
+        groups: ['content'],
+        dragGroups: ['content'],
         source: 'images/Edited-United-States-School.jpg',
-        x: 160, y: 750,
+        x: 1450, y: 1860,
         scale: 0.3
     }).drawLayers();
 
     myCanvas.drawImage({
         layer: true,
         draggable: true,
-        groups: ['nodes'],
-        dragGroups: ['nodes'],
+        groups: ['content'],
+        dragGroups: ['content'],
         source: 'images/kono2may.gif',
-        x: 450, y: 1100,
+        x: 1750, y: 2210,
         scale: 0.3
     }).drawLayers();
 
     myCanvas.drawImage({
         layer: true,
         draggable: true,
-        groups: ['nodes'],
-        dragGroups: ['nodes'],
+        groups: ['content'],
+        dragGroups: ['content'],
         source: 'images/stats.png',
-        x: 160, y: 1100,
+        x: 1450, y: 2210,
         scale: 0.3
+    }).drawImage({
+        layer: true,
+        draggable: true,
+        fromCenter: false,
+        groups: ['content'],
+        dragGroups: ['content'],
+        source: 'images/RedToBlue.png',
+        x: 1050, y: 1850,
+        scale: 1,
+        click: function (){
+            myCanvas.animateLayerGroup('content', {
+                x: '+=2000',
+                y: '+=170'
+            }).drawLayers();
+        }
+    }).drawImage({
+        layer: true,
+        draggable: true,
+        fromCenter: false,
+        groups: ['content'],
+        dragGroups: ['content'],
+        source: 'images/RedToGreen.png',
+        x: 1100, y: 1500,
+        scale: 1,
+        click: function (){
+            myCanvas.animateLayerGroup('content', {
+                x: '+=600',
+                y: '+=1470'
+            }).drawLayers();
+        }
     }).drawLayers();
-
+    //
     // Draw Unions ------------------------------------------
-    myCanvas.drawRect({
-        layer: true,
-        draggable: true,
-        groups: ['nodes'],
-        dragGroups: ['nodes'],
-        strokeStyle: '#36c',
-        strokeWidth: 4,
-        x: 915, y: 915,
-        width: 600,
-        height: 600
-    });
-    myCanvas.drawText({
-        layer: true,
-        draggable: true,
-        groups: ['nodes'],
-        dragGroups: ['nodes'],
-        fillStyle: '#36c',
-        fontStyle: 'bold',
-        fontSize: '10pt',
-        fontFamily: 'Trebuchet MS, sans-serif',
-        text: 'Unions',
-        x: 770, y: 630,
-        maxWidth: 300
-    }).restoreCanvas();
 
     myCanvas.drawText({
         layer: true,
         draggable: true,
-        groups: ['nodes'],
-        dragGroups: ['nodes'],
-        fillStyle: '#36c',
+        groups: ['content'],
+        dragGroups: ['content'],
+        fillStyle: '#000',
         fontStyle: 'bold',
         fontSize: '10pt',
         fontFamily: 'Trebuchet MS, sans-serif',
         align: 'left',
         text: "Waiting for Superman highlights the broken bureaucracy of the educational system. Unions, predominantly, are not only minimizing the wages of teachers for political control but are using those misappropriated funds to fuel stagnation in our current education system. The union's power stems from their polarizing arguments and speeches, but the problem is their platform was made and meant for war-fueled industrial economy from WWII. We now have far more fields of study, more students willing to learn and become the best at what they want to do. Our exams and standards try to mold students into cookie cutter definitions of success, and fail to acknowledge the shape and unique qualities of each student. ",
-        x: 790, y: 760,
+        x: 920, y: 340,
         maxWidth: 300
     }).restoreCanvas();
 
     myCanvas.drawText({
         layer: true,
         draggable: true,
-        groups: ['nodes'],
-        dragGroups: ['nodes'],
-        fillStyle: '#36c',
+        groups: ['content'],
+        dragGroups: ['content'],
+        fillStyle: '#000',
         fontStyle: 'bold',
         fontSize: '10pt',
         fontFamily: 'Trebuchet MS, sans-serif',
         align: 'left',
         text: "The intricate interconnections between the needs and wants of teachers, unions, and the federal government create this web of complexity that makes progression extremely difficult. The easiest solution to this labyrinth seems to just break down the walls and tread over the rubble towards the exit. The problem is the walls are high and the people with the bulldozers and tools are outside of this maze. The majority of Americans acknowledge a problem exists in our educational system, but apathy grows as a solution becomes harder to reach politically and socially so people become uninvolved and uninterested in the future of our students.",
-        x: 790, y: 1000,
+        x: 920, y: 570,
         maxWidth: 300
     }).restoreCanvas();
-
-    //
-
-    // General Objects
-    myCanvas.drawRect({
-        layer: true,
-        draggable: true,
-        groups: ['nodes'],
-        dragGroups: ['nodes'],
-        strokeStyle: '#0000',
-        strokeWidth: 1,
-        x: 1600, y: 1600,
-        width: 6000,
-        height: 6000
-    });
 
     myCanvas.drawImage({
         layer: true,
         draggable: true,
-        groups: ['nodes'],
-        dragGroups: ['nodes'],
+        groups: ['content'],
+        dragGroups: ['content'],
         source: 'images/WFS.jpg',
-        x: 1070, y: 740,
+        x: 1250, y: 310,
         scale: 0.4
-    }).drawLayers();
-
-    // Global Layer Settings
-    myCanvas.setLayers({
-        mousedown: function(layer) {
-            bMouseDown = true;
-        },
-        mouseup: function(layer) {
-            bMouseDown = false;
-        },
-        mousemove: function(layer) {
-            if (!bMouseDown) return;
-            var KDSVideo = $("#KidsHateSchoolVideo");
-            var KDSVideoOffset = KDSVideo.offset();
-            var top = KDSVideoOffset.top +  layer.dy;
-            var left = KDSVideoOffset.left + layer.dx;
-            KDSVideo.offset({top: top, left: left});
-            //console.log();
+    }).drawImage({
+        layer: true,
+        draggable: true,
+        fromCenter: false,
+        groups: ['content'],
+        dragGroups: ['content'],
+        source: 'images/GreenToBlue.png',
+        x: 750, y: 750,
+        scale: 1,
+        click: function (){
+            myCanvas.animateLayerGroup('content', {
+                x: '+=1400',
+                y: '-=1300'
+            }).drawLayers();
+        }
+    }).drawImage({
+        layer: true,
+        draggable: true,
+        fromCenter: false,
+        groups: ['content'],
+        dragGroups: ['content'],
+        source: 'images/GreenToRed.png',
+        x: 1050, y: 800,
+        scale: 1,
+        click: function (){
+            myCanvas.animateLayerGroup('content', {
+                x: '-=600',
+                y: '-=1470'
+            }).drawLayers();
         }
     }).drawLayers();
+    ////
+    //
+    //// General Objects
+    //myCanvas.drawRect({
+    //    layer: true,
+    //    draggable: true,
+    //    groups: ['nodes'],
+    //    dragGroups: ['nodes'],
+    //    strokeStyle: '#0000',
+    //    strokeWidth: 1,
+    //    x: 1600, y: 1600,
+    //    width: 6000,
+    //    height: 6000
+    //});
+    //
+
+    //
+    //// Global Layer Settings
+    //myCanvas.setLayers({
+    //    mousedown: function(layer) {
+    //        bMouseDown = true;
+    //    },
+    //    mouseup: function(layer) {
+    //        bMouseDown = false;
+    //    },
+    //    mousemove: function(layer) {
+    //        if (!bMouseDown) return;
+    //        var KDSVideo = $("#KidsHateSchoolVideo");
+    //        var KDSVideoOffset = KDSVideo.offset();
+    //        var top = KDSVideoOffset.top +  layer.dy;
+    //        var left = KDSVideoOffset.left + layer.dx;
+    //        KDSVideo.offset({top: top, left: left});
+    //        //console.log();
+    //    }
+    //}).drawLayers();
 }
 
