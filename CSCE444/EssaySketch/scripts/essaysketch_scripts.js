@@ -2,14 +2,16 @@
  * Created by Handro on 10/16/2015.
  */
 var bMouseDown = false;
+var myCanvas;
 jQuery(document).mouseleave(function(){bMouseDown = false;})
 
 $( document ).ready(function() {
     // Init of Globals
-
-    var myCanvas = $('#myCanvas');
+    myCanvas = $('#myCanvas');
     var canvasWidth = $(window).width(); //- $(window).width() * 0.05;
     var canvasHeight = $(window).height() ; //- $(window).height() * 0.05;
+
+    var introContent = [];
 
     var PIXEL_RATIO = (function () {
         var ctx = document.createElement("canvas").getContext("2d"),
@@ -38,50 +40,157 @@ function drawIntroContent(myCanvas)
     myCanvas.drawImage({
         layer: true,
         fromCenter: false,
-        draggable: true,
-        groups: ['nodes'],
-        dragGroups: ['nodes'],
+        draggable: false,
+        groups: ['intro'],
         source: 'images/Enter.png',
         x: 10, y: 10,
+        scale: 1
+    }).drawLayers();
+
+    myCanvas.drawImage({
+        layer: true,
+        fromCenter: false,
+        draggable: false,
+        groups: ['intro'],
+        source: 'images/IntroYellow.png',
+        x: 570, y: 400,
         scale: 1,
         click: function(layer) {
-            // Spin star
-            $(this).animateLayer(layer, {
-                opacity: '0', //This works
+            myCanvas.animateLayerGroup('intro', {
+                opacity: 0,
                 scale: 2
-            });
-            drawContentBackground(myCanvas);
+            }).drawLayers();
+            drawContentBackground(myCanvas, 'Teachers');
+        }
+    }).drawLayers();
+
+    myCanvas.drawImage({
+        layer: true,
+        fromCenter: false,
+        draggable: false,
+        groups: ['intro'],
+        source: 'images/IntroGreen.png',
+        x: 290, y: 410,
+        scale: 1,
+        click: function(layer) {
+            myCanvas.animateLayerGroup('intro', {
+                opacity: 0,
+                scale: 2
+            }).drawLayers();
+            drawContentBackground(myCanvas, 'Unions');
+        }
+    }).drawLayers();
+
+    myCanvas.drawImage({
+        layer: true,
+        fromCenter: false,
+        draggable: false,
+        groups: ['intro'],
+        source: 'images/IntroBlue.png',
+        x: 50, y: 530,
+        scale: 1,
+        click: function(layer) {
+            myCanvas.animateLayerGroup('intro', {
+                opacity: 0,
+                scale: 2
+            }).drawLayers();
+            drawContentBackground(myCanvas, 'Students');
+        }
+    }).drawLayers();
+
+    myCanvas.drawImage({
+        layer: true,
+        fromCenter: false,
+        draggable: false,
+        groups: ['intro'],
+        source: 'images/IntroRed.png',
+        x: 290, y: 670,
+        scale: 1,
+        click: function(layer) {
+            myCanvas.animateLayerGroup('intro', {
+                opacity: 0,
+                scale: 2
+            }).drawLayers();
+            drawContentBackground(myCanvas, 'Government');
         }
     }).drawLayers();
 }
 
-function drawContentBackground(myCanvas)
+function drawContentBackground(myCanvas, nodeString)
 {
+    var Xpos = 0;
+    var Ypos = 0;
+
+    // This is to decide the position of the background
+    switch (nodeString){
+        case 'Teachers':
+            Xpos = -600;
+            Ypos = 400;
+            break;
+        case 'Students':
+
+            break;
+        case 'Unions':
+
+            break;
+        case 'Government':
+
+            break;
+    }
+
     myCanvas.drawImage({
         layer: true,
         fromCenter: false,
         draggable: true,
-        groups: ['nodes'],
-        dragGroups: ['nodes'],
+        groups: ['content'],
+        dragGroups: ['content'],
         source: 'images/backpalette.jpg',
-        x: 0, y: 0,
-        scale: 2,
-        opacity: 0,
-        load: function(layer) {
-            // Spin star
-            $(this).animateLayer(layer, {
-                opacity: '1' //This works
-            });
-        },
-        click: function(layer) {
-            // Spin star
-            var posX = layer.x - 200;
-            var posY = layer.y - 200;
-            $(this).animateLayer(layer, {
-                x: posX, //This works
-                y: posY
-            });
-        }
+        x: 800, y: 800,
+        scale: 3
+    }).drawLayers();
+
+    myCanvas.drawImage({
+        layer: true,
+        fromCenter: false,
+        draggable: true,
+        groups: ['content'],
+        dragGroups: ['content'],
+        source: "images/Teachers.png",
+        x: 2600, y: -50,
+        scale: 1
+    }).drawLayers();
+
+    myCanvas.drawImage({
+        layer: true,
+        fromCenter: false,
+        draggable: true,
+        groups: ['content'],
+        dragGroups: ['content'],
+        source: "images/Unions.png",
+        x: 450, y: -10,
+        scale: 1
+    }).drawLayers();
+
+    myCanvas.drawImage({
+        layer: true,
+        fromCenter: false,
+        draggable: true,
+        groups: ['content'],
+        dragGroups: ['content'],
+        source: "images/Students.png",
+        x: -950, y: 1300,
+        scale: 1
+    }).drawLayers();
+
+    myCanvas.drawImage({
+        layer: true,
+        fromCenter: false,
+        draggable: true,
+        groups: ['content'],
+        dragGroups: ['content'],
+        source: "images/Government.png",
+        x: 1000, y: 1500,
+        scale: 1
     }).drawLayers();
 }
 
