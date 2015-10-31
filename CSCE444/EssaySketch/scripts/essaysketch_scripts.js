@@ -118,9 +118,6 @@ function drawIntroContent()
 
 function drawContentBackground(nodeString)
 {
-    var Xpos = 0;
-    var Ypos = 0;
-
     myCanvas.drawImage({
         layer: true,
         fromCenter: false,
@@ -221,11 +218,11 @@ function drawContent()
         groups: ['content'],
         dragGroups: ['content'],
         fillStyle: '#000',
-        fontStyle: 'bold',
-        fontSize: '10pt',
+        fontSize: '12pt',
         fontFamily: 'Trebuchet MS, sans-serif',
-        text: "Students have a agreed in an overwhelming majority that school doesn't engage them as much as it could. The problem stems from far more than teaching material. There is a seemingly complex labyrinth of information that cycles, turns, and confounds the issue of education the more it's traversed.",
-        x: -370, y: 1600,
+        align: 'left',
+        text: "Students have agreed in an overwhelming majority that school doesn't engage them as much as it could. The problem stems from far more than teaching material. Vannevar Bush's ideas on the mind and its inner workings highlighted the non-linear processes of our memories and thought processes through his Memex. This parallels how students (and humans) perceive information and learn new concepts. Students aren't responding to standardized and wrote learning schemes. Catering to the students' mind could potentially enhance the student experience and peak interest in education.",
+        x: -370, y: 1650,
         maxWidth: 300
     }).drawText({
         layer: true,
@@ -233,11 +230,10 @@ function drawContent()
         groups: ['content'],
         dragGroups: ['content'],
         fillStyle: '#000',
-        fontStyle: 'bold',
-        fontSize: '10pt',
+        fontSize: '12pt',
         fontFamily: 'Trebuchet MS, sans-serif',
         text: "Here we contrast the use of technology in two different settings, corresponding to socioeconomic conditions and how the perception of technology changes with perspective.",
-        x: 40, y: 1880,
+        x: 40, y: 1730,
         maxWidth: 200
     }).restoreCanvas();
 
@@ -248,7 +244,7 @@ function drawContent()
         groups: ['content'],
         dragGroups: ['content'],
         source: 'images/Coolidge2-1024x682.jpg',
-        x: -470, y: 1400,
+        x: -470, y: 1250,
         scale: 0.2
     }).drawImage({
         layer: true,
@@ -257,7 +253,7 @@ function drawContent()
         groups: ['content'],
         dragGroups: ['content'],
         source: 'images/Montessori-Based-Learning-Apps-Kids.jpg',
-        x: -470, y: 1700,
+        x: -470, y: 1550,
         scale: 0.2
     }).drawImage({
         layer: true,
@@ -312,8 +308,7 @@ function drawContent()
         groups: ['content'],
         dragGroups: ['content'],
         fillStyle: '#36c',
-        fontStyle: 'bold',
-        fontSize: '10pt',
+        fontSize: '12pt',
         fontFamily: 'Trebuchet MS, sans-serif',
         align: 'left',
         text: "This quote from Geoffrey Canada in the documentary Waiting for Superman describes the complexity and immensity of the job our teachers have. Canada's metaphor exposes the truth that teaching is an art. Teaching requires more than logic, statistics, exams, and grades. Teaching demands the melding of emotion, perception, aspiration to universally convey ideas to students with different backgrounds, intellect, and wants. Sequential and wrote styles of teaching are obviously not working. Introducing new teaching styles that conform to the hypertextual nature of the mind is key for student learning. Finding the balance to convey information in a progressive and exciting way for the students takes an artisan of the mind and a master of patience.",
@@ -327,8 +322,7 @@ function drawContent()
         groups: ['content'],
         dragGroups: ['content'],
         fillStyle: '#36c',
-        fontStyle: 'bold',
-        fontSize: '10pt',
+        fontSize: '12pt',
         fontFamily: 'Trebuchet MS, sans-serif',
         align: 'left',
         text: "Traditional methods of teaching and the apathy that grows in american society are conducive to poor educational experiences for low income students. Students of all ages, learn actively through planning, participation, and problem solving, not through passive absorption of information and authority. The linearity and sequential nature of traditional learning doesn't appeal to learners minds. Learning is a complex experience with depth, breadth, and  connections that each human willingly makes unbound from the influence of money, politics, religion, and apathy.",
@@ -342,8 +336,7 @@ function drawContent()
         groups: ['content'],
         dragGroups: ['content'],
         fillStyle: '#36c',
-        fontStyle: 'bold',
-        fontSize: '10pt',
+        fontSize: '12pt',
         fontFamily: 'Trebuchet MS, sans-serif',
         align: 'left',
         text: "www.educationrevolution.org/store/product/onesize/",
@@ -360,6 +353,36 @@ function drawContent()
         source: 'images/los_angeles_tracy01.jpg',
         x: 2700, y: 490,
         scale: 0.4
+    }).drawImage({
+        layer: true,
+        draggable: true,
+        fromCenter: false,
+        groups: ['content'],
+        dragGroups: ['content'],
+        source: 'images/YellowToGreen.png',
+        x: 2800, y: 400,
+        scale: 1,
+        click: function (){
+            myCanvas.animateLayerGroup('content', {
+                x: '+=2200',
+                y: '-=80'
+            }).drawLayers();
+        }
+    }).drawImage({
+        layer: true,
+        draggable: true,
+        fromCenter: false,
+        groups: ['content'],
+        dragGroups: ['content'],
+        source: 'images/YellowToRed.png',
+        x: 2950, y: 650,
+        scale: 1,
+        click: function (){
+            myCanvas.animateLayerGroup('content', {
+                x: '+=1600',
+                y: '-=1550'
+            }).drawLayers();
+        }
     }).drawLayers();
     //
     //// Draw Government ------------------------------------------
@@ -369,8 +392,7 @@ function drawContent()
         groups: ['content'],
         dragGroups: ['content'],
         fillStyle: '#FFF',
-        fontStyle: 'bold',
-        fontSize: '10pt',
+        fontSize: '12pt',
         fontFamily: 'Trebuchet MS, sans-serif',
         align: 'left',
         text: 'Is lack of money the main problem? NO. America spends on average more than most developed countries on education (we rank 4th in the world), but we rank low on educational aptitudes.',
@@ -385,8 +407,7 @@ function drawContent()
         dragGroups: ['content'],
         align: 'right',
         fillStyle: '#FFF',
-        fontStyle: 'bold',
-        fontSize: '10pt',
+        fontSize: '12pt',
         fontFamily: 'Trebuchet MS, sans-serif',
         text: "Nonetheless, students and teachers argue that standardized testing isn't properly measuring success. The federal government continues to try and measure students to subjective standards forgetting the originality and unique strengths and weaknesses of each student.",
         x: 1450, y: 2020,
@@ -399,8 +420,7 @@ function drawContent()
         groups: ['content'],
         dragGroups: ['content'],
         fillStyle: '#FFF',
-        fontStyle: 'bold',
-        fontSize: '10pt',
+        fontSize: '12pt',
         fontFamily: 'Trebuchet MS, sans-serif',
         align: 'left',
         text: "The east coast clearly generates pro-education content and take action to improve our educational system. While on the other hand, the south continues to struggle with censorship, poverty, and stigmas. This is not to say that places like New York don't have underprivileged schools or students because they do and most of the positive content stems from the problems of schools in the north. The issue is that these positive endeavors aren't as prevalent in the south.",
@@ -466,6 +486,21 @@ function drawContent()
                 y: '+=1470'
             }).drawLayers();
         }
+    }).drawImage({
+        layer: true,
+        draggable: true,
+        fromCenter: false,
+        groups: ['content'],
+        dragGroups: ['content'],
+        source: 'images/RedToYellow.png',
+        x: 2000, y: 1510,
+        scale: 1,
+        click: function (){
+            myCanvas.animateLayerGroup('content', {
+                x: '-=1600',
+                y: '+=1550'
+            }).drawLayers();
+        }
     }).drawLayers();
     //
     // Draw Unions ------------------------------------------
@@ -476,8 +511,7 @@ function drawContent()
         groups: ['content'],
         dragGroups: ['content'],
         fillStyle: '#000',
-        fontStyle: 'bold',
-        fontSize: '10pt',
+        fontSize: '12pt',
         fontFamily: 'Trebuchet MS, sans-serif',
         align: 'left',
         text: "Waiting for Superman highlights the broken bureaucracy of the educational system. Unions, predominantly, are not only minimizing the wages of teachers for political control but are using those misappropriated funds to fuel stagnation in our current education system. The union's power stems from their polarizing arguments and speeches, but the problem is their platform was made and meant for war-fueled industrial economy from WWII. We now have far more fields of study, more students willing to learn and become the best at what they want to do. Our exams and standards try to mold students into cookie cutter definitions of success, and fail to acknowledge the shape and unique qualities of each student. ",
@@ -491,12 +525,11 @@ function drawContent()
         groups: ['content'],
         dragGroups: ['content'],
         fillStyle: '#000',
-        fontStyle: 'bold',
-        fontSize: '10pt',
+        fontSize: '12pt',
         fontFamily: 'Trebuchet MS, sans-serif',
         align: 'left',
         text: "The intricate interconnections between the needs and wants of teachers, unions, and the federal government create this web of complexity that makes progression extremely difficult. The easiest solution to this labyrinth seems to just break down the walls and tread over the rubble towards the exit. The problem is the walls are high and the people with the bulldozers and tools are outside of this maze. The majority of Americans acknowledge a problem exists in our educational system, but apathy grows as a solution becomes harder to reach politically and socially so people become uninvolved and uninterested in the future of our students.",
-        x: 920, y: 570,
+        x: 920, y: 650,
         maxWidth: 300
     }).restoreCanvas();
 
@@ -536,6 +569,21 @@ function drawContent()
             myCanvas.animateLayerGroup('content', {
                 x: '-=600',
                 y: '-=1470'
+            }).drawLayers();
+        }
+    }).drawImage({
+        layer: true,
+        draggable: true,
+        fromCenter: false,
+        groups: ['content'],
+        dragGroups: ['content'],
+        source: 'images/GreenToYellow.png',
+        x: 1500, y: 400,
+        scale: 1,
+        click: function (){
+            myCanvas.animateLayerGroup('content', {
+                x: '-=2200',
+                y: '+=80'
             }).drawLayers();
         }
     }).drawLayers();
