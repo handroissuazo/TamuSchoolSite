@@ -504,7 +504,7 @@ function drawContent()
     }).drawLayers();
     //
     // Draw Unions ------------------------------------------
-
+    //TODO add a picture describing the labyrinth of the educational state, (people on the outside, then teachers, students, unions and gov in the inside. Then give people the tools. )
     myCanvas.drawText({
         layer: true,
         draggable: true,
@@ -515,8 +515,8 @@ function drawContent()
         fontFamily: 'Trebuchet MS, sans-serif',
         align: 'left',
         text: "Waiting for Superman highlights the broken bureaucracy of the educational system. Unions, predominantly, are not only minimizing the wages of teachers for political control but are using those misappropriated funds to fuel stagnation in our current education system. The union's power stems from their polarizing arguments and speeches, but the problem is their platform was made and meant for war-fueled industrial economy from WWII. We now have far more fields of study, more students willing to learn and become the best at what they want to do. Our exams and standards try to mold students into cookie cutter definitions of success, and fail to acknowledge the shape and unique qualities of each student. ",
-        x: 920, y: 340,
-        maxWidth: 300
+        x: 1360, y: 650,
+        maxWidth: 370
     }).restoreCanvas();
 
     myCanvas.drawText({
@@ -525,12 +525,12 @@ function drawContent()
         groups: ['content'],
         dragGroups: ['content'],
         fillStyle: '#000',
-        fontSize: '12pt',
+        fontSize: '14pt',
         fontFamily: 'Trebuchet MS, sans-serif',
         align: 'left',
-        text: "The intricate interconnections between the needs and wants of teachers, unions, and the federal government create this web of complexity that makes progression extremely difficult. The easiest solution to this labyrinth seems to just break down the walls and tread over the rubble towards the exit. The problem is the walls are high and the people with the bulldozers and tools are outside of this maze. The majority of Americans acknowledge a problem exists in our educational system, but apathy grows as a solution becomes harder to reach politically and socially so people become uninvolved and uninterested in the future of our students.",
-        x: 920, y: 650,
-        maxWidth: 300
+        text: "The intricate interconnections between the needs and wants of teachers, unions, and the federal government create this web of complexity that makes progression extremely difficult. The easiest solution to this labyrinth seems to just break down the walls and tread over the rubble towards the exit. The problem is the walls are high and the people with the bulldozers and tools are outside of this maze. The majority of Americans acknowledge a problem exists in our educational system, but apathy grows as a solution becomes harder to reach politically and socially. Consequently, many people stay uninvolved and uninterested in the future of our students.",
+        x: 930, y: 370,
+        maxWidth: 400
     }).restoreCanvas();
 
     myCanvas.drawImage({
@@ -539,8 +539,8 @@ function drawContent()
         groups: ['content'],
         dragGroups: ['content'],
         source: 'images/WFS.jpg',
-        x: 1250, y: 310,
-        scale: 0.4
+        x: 920, y: 660,
+        scale: 0.5
     }).drawImage({
         layer: true,
         draggable: true,
@@ -622,5 +622,93 @@ function drawContent()
     //        //console.log();
     //    }
     //}).drawLayers();
+}
+
+function drawMixYellowAndRed() {
+    // teachers and the feds
+    myCanvas.drawText({
+        layer: true,
+        draggable: true,
+        groups: ['content'],
+        dragGroups: ['content'],
+        fillStyle: '#000',
+        fontSize: '12pt',
+        fontFamily: 'Trebuchet MS, sans-serif',
+        align: 'left',
+        text: "Teachers don't work under the ideal capitalistic system America boasts so much. They are bound by both union and federal contracts to earn specific wages at certain points in their career. Additionally, the idea of tenure protects the teachers who cannot produce quality lessons and passing students according to American standards. Ultimately, the whole system has clearly been made through a patch work of policies who cater to the adults, when the policy should cater to the needs of our children and students.",
+        x: PleasePUTposition, y: TODO,
+        maxWidth: 300
+    }).restoreCanvas();
+
+}
+
+// Teachers and Unions
+function drawMixYellowAndGreen() {
+
+    myCanvas.drawText({
+        layer: true,
+        draggable: true,
+        groups: ['content'],
+        dragGroups: ['content'],
+        fillStyle: '#000',
+        fontSize: '12pt',
+        fontFamily: 'Trebuchet MS, sans-serif',
+        align: 'left',
+        text: "",
+        x: PleasePUTposition, y: TODO,
+        maxWidth: 300
+    }).restoreCanvas();
+}
+
+//Teachers and students
+function drawMixYellowAndBlue() {
+    myCanvas.drawText({
+        layer: true,
+        draggable: true,
+        groups: ['content'],
+        dragGroups: ['content'],
+        fillStyle: '#000',
+        fontSize: '12pt',
+        fontFamily: 'Trebuchet MS, sans-serif',
+        align: 'left',
+        text: "Religious and prideful zeal overshadows the knowledge and freedom to explore our history as humans and learn as we do, through experience.",
+        x: PleasePUTposition, y: TODO,
+        maxWidth: 300
+    }).restoreCanvas();
+
+    myCanvas.drawText({
+        layer: true,
+        draggable: true,
+        groups: ['content'],
+        dragGroups: ['content'],
+        fillStyle: '#000',
+        fontSize: '12pt',
+        fontFamily: 'Trebuchet MS, sans-serif',
+        align: 'left',
+        text: "This adds tension to the debate over curriculum and content in schools. Not only does this animate teachers, but this affects students by enforcing opinions, biases, and cultural lenses that could be detrimental to the pursuit of knowledge.",
+        x: PleasePUTposition, y: TODO,
+        maxWidth: 300
+    }).restoreCanvas();
+
+    // TODO Add picture of the religious zeal and find something on progressive teaching.
+}
+
+function drawMixAll() {
+
+    myCanvas.drawText({
+        layer: true,
+        draggable: true,
+        groups: ['content'],
+        dragGroups: ['content'],
+        fillStyle: '#000',
+        fontSize: '12pt',
+        fontFamily: 'Trebuchet MS, sans-serif',
+        align: 'left',
+        text: "The problems Americans face are selfish ones and in turn we look away from progressiveness and community. Some in the educational system would rather let resources go to waste than let them trickle down to less privileged schools. Many districts, communities, and students debate over the censorship of content and strive to maintain old antiquated values that no longer support social and legal trends. Making learning an enjoyable part of life is a collaborative effort of all communities from all walks of life. Ideally, we would all work towards the greater good, but the seams of what we deem cultural, spiritual, economic and social boundaries are too strong to unravel.",
+        x: PleasePUTposition, y: TODO,
+        maxWidth: 300
+    }).restoreCanvas();
+
+    //TODO add found objects and their explanations
 }
 
