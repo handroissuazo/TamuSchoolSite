@@ -406,6 +406,9 @@ function drawContent()
         fontFamily: 'Trebuchet MS, sans-serif',
         align: 'left',
         text: "www.educationrevolution.org/store/product/onesize/",
+        click: function(){
+            window.location.href = "http://www.educationrevolution.org/store/product/onesize/";
+        },
         x: 3530, y: 840,
         opacity: 0,
         maxWidth: 580
