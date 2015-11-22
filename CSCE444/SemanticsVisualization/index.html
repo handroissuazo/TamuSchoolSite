@@ -1,64 +1,32 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<body>
+<script src="script/jquery-1.11.3.min.js"></script>
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="http://d3js.org/topojson.v1.min.js"></script>
 <!-- I recommend you host this file on your own, since this will change without warning -->
 <script src="script/datamaps.all.min.js"></script>
-<h2>Semantics Visualization of Alejandro Suazo</h2>
-<div id="container" style="position: relative; width: 80%; max-height: 450px;"></div>
+<script src="script/sem_vis.js"></script>
+<link rel="stylesheet" type="text/css" href="style/sim_vis.css">
 
+<body>
+    <h2>Semantics Visualization of Alejandro Suazo</h2>
+    <div id="container" style="position: relative; width: 80%; max-height: 450px;"></div>
+    <div id="LoadingIndicator" style="display: none;"></div>
+    <div id="InformationSideBar">
+        <h1>The good stuff</h1> Information to come.
 
-<script>
-    //basic map config with custom fills, mercator projection
-    var map = new Datamap({
+        <h3>Take a look at some data, by clicking below!</h3>
 
-        element: document.getElementById('container'),
-        scope: 'usa',
-        height: 1000,
-        fills: {
-            defaultFill: '#f0af0a',
-            lt50: '#00FF66',
-            gt50: 'red'
-        },
-        data: {
-            'TX': {
-                totalMil: '$36,000',
-                totalTweets: '2500'
-            }
-        },
-        geographyConfig: {
-            highlightBorderColor: '#FFF',
-            highlightBorderWidth: 3,
-            highlightFillColor: 'rgba(0,200,200,1)',
-            popupTemplate: function(geo, data) {
-                if (data)
-                    return "<div class='hoverinfo'>" + geo.properties.name + "</br>" + "Total Military Spending: " + data.totalMil
-                            + '</br>Total Tweet Count: ' + data.totalTweets + "</div>";
-                else
-                    return "<div class='hoverinfo'>" + geo.properties.name + "</div>";
-            }
-        }
+        <div class="linkButton" id="lesoSummary">Leso Summary</div>
+        <div class="linkButton" id="lesoD">Leso D</div>
+        <div class="linkButton" id="lesoA">Leso A</div>
+        <div class="linkButton" id="lesoB">Leso B</div>
+        <div class="linkButton" id="lesoC">Leso C</div>
+        <div class="linkButton" id="lesoE">Leso E</div>
+        <div class="linkButton" id="lesoF">Leso F</div>
+        <div class="linkButton" id="lesoP">Leso P</div>
+        <div class="linkButton" id="lesoQ">Leso Q</div>
+        <div class="linkButton" id="US">US</div>
 
-    });
-
-    map.bubbles([
-        {name: 'Military', latitude: 30.60, longitude: -96.31, radius: 28, fillKey: 'gt50', militarySpending: '36,000', idtag: 'mil' },
-        {name: 'Tweets', latitude: 30.60, longitude: -96.31, radius: 18, fillKey: 'lt50', tweets: 2500, idtag: 'tweet'}
-    ], {
-        popupTemplate: function(geo, data) {
-            if (data.idtag === 'tweet')
-                return "<div class='hoverinfo'> " + data.name
-                        + ' Count on </br> October weekend: ' + data.tweets + "</div>";
-            else if (data.idtag === 'mil')
-                return "<div class='hoverinfo'> " + data.name
-                        + ' Spending </br> in 2014: $' + data.militarySpending  + "</div>";
-        },
-        borderColor: '#000',
-        highlightFillColor: '#CC14A6',
-        highlightBorderColor: '#FFFFFF',
-        highlightBorderWidth: 4
-    });
-
-</script>
+    </div>
 </body>

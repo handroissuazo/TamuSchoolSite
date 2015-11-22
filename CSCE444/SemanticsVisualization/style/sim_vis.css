@@ -1,0 +1,67 @@
+body {
+    width: 100%;
+    height: 100%;
+}
+
+#InformationSideBar {
+    width: 20%;
+    height: 100%;
+    background-color: #84C8CC;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    padding: 20px;
+    -webkit-box-shadow: -7px 1px 29px -3px rgba(0,0,0,0.75);
+    -moz-box-shadow: -7px 1px 29px -3px rgba(0,0,0,0.75);
+    box-shadow: -7px 1px 29px -3px rgba(0,0,0,0.75);
+}
+
+#LoadingIndicator {
+    display: none;
+    margin: 300px auto auto auto;
+    width: 75%;
+    font-size: 2em;
+    font-family: geneva, arial, sans-serif;
+    text-align: center;
+    padding: 10px;
+    border-radius: 15px;
+    color: white;
+    background-color: rgba(0,0,0, 0.7);
+}
+
+/*This will most likely get removed because I don't like how these links will look in my final product. I made these purely to complete the second deliverable's requirements.*/
+.linkButton {
+    background: #a1d54f;
+    background: -moz-linear-gradient(top, #a1d54f 50%, #80c217 51%, #7cbc0a 100%);
+    background: -webkit-linear-gradient(top, #a1d54f 50%,#80c217 51%,#7cbc0a 100%);
+    background: linear-gradient(to bottom, #a1d54f 50%,#80c217 51%,#7cbc0a 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a1d54f', endColorstr='#7cbc0a',GradientType=0 );
+
+    border-radius: 10px;
+    padding: 5px;
+    width: 50%;
+    margin: 10px auto 10px auto;
+    text-align: center;
+    cursor: pointer;
+    font-family: 'Arial Narrow';
+
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+}
+
+.linkButton:hover {
+    background: #deefff;
+    background: -moz-linear-gradient(top, #a1e55f 50%, #80c217 51%, #7cbc0a 100%);
+    background: -webkit-linear-gradient(top, #a1e55f 50%,#80c217 51%,#7cbc0a 100%);
+    background: linear-gradient(to bottom, #a1e55f 50%,#80c217 51%,#7cbc0a 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a1d54f', endColorstr='#7cbc0a',GradientType=0 );
+}
+
+.linkButton:active {
+    background: -moz-linear-gradient(top, #7cbc0a 50%, #80c217 51%, #a1d54f 100%);
+    background: -webkit-linear-gradient(top, #7cbc0a 50%,#80c217 51%,#a1d54f 100%);
+    background: linear-gradient(to bottom, #7cbc0a 50%,#80c217 51%,#a1d54f 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a1d54f', endColorstr='#7cbc0a',GradientType=0 );
+}
