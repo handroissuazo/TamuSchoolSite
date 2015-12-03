@@ -65,3 +65,45 @@ body {
     background: linear-gradient(to bottom, #7cbc0a 50%,#80c217 51%,#a1d54f 100%);
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a1d54f', endColorstr='#7cbc0a',GradientType=0 );
 }
+
+/* MAP Styling */
+.land {
+    fill: #222;
+}
+
+.county-boundary {
+     fill: none;
+     stroke: #aaddee;
+     stroke-width: .5px;
+ }
+
+.state-boundary {
+    fill: none;
+}
+
+.county-boundary:hover {
+    fill: none !important;
+    stroke: #aaddee;
+    stroke-width: .5px;
+}
+
+.state-boundary:hover {
+    fill: none !important;
+}
+
+/*path:hover {*/
+    /*fill: red;*/
+/*}*/
+
+div.tooltip {
+    position: absolute;
+    text-align: center;
+    width: 60px;
+    height: 28px;
+    padding: 2px;
+    font: 12px sans-serif;
+    background: lightsteelblue;
+    border: 0px;
+    border-radius: 8px;
+    pointer-events: none;
+}
