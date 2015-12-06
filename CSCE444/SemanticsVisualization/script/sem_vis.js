@@ -6,6 +6,11 @@ var _data_overviewCounts = {};
 var dynamicCounts = {};
 var _data_assets_D = [];
 var svg;
+var path;
+var g;
+var projection;
+var width;
+var height;
 
 $( document ).ready(function() {
     // Init of Globals
@@ -47,14 +52,14 @@ function dom_showLoadingIndicator(){
 
 function dom_CreateMap(){
 
-    var width = 960,
-        height = 500;
+    width = 960;
+    height = 500;
 
-    var projection = d3.geo.albersUsa()
+    projection = d3.geo.albersUsa()
         .scale(1000)
         .translate([width / 2, height / 2]);
 
-    var path = d3.geo.path()
+    path = d3.geo.path()
         .projection(projection);
 
     svg = d3.select("body").append("svg")
@@ -65,18 +70,16 @@ function dom_CreateMap(){
         .attr("class", "tooltip")
         .style("opacity", 0);
 
+    g = svg.append("g");
     d3.json("data/states_usa.topo.json", function(error, us) {
         if (error) throw error;
 
-        //svg.insert("path", ".graticule")
-        //    .datum(topojson.feature(us, us.objects.land))
-        //    .attr("class", "land")
-        //    .attr("d", path);
-
-        svg.selectAll("path")
+        g.append("g")
+            .selectAll("path")
             .data(topojson.feature(us, us.objects.states).features)
             .enter().append("path")
             .attr("d", path)
+            .attr("class", "state")
             .style("fill", function(d) {
                 var value = dynamicCounts[d.properties.name].D;
                 return "rgba(173, 15, 15, " + value / 10000 + ")";
@@ -99,6 +102,9 @@ function dom_CreateMap(){
                 div.transition()
                     .duration(500)
                     .style("opacity", 0);
+            })
+            .on("click", function(d) {
+                state_clicked(d);
             });
 
         //svg.insert("path", ".graticule")
@@ -106,15 +112,41 @@ function dom_CreateMap(){
         //    .attr("class", "county-boundary")
         //    .attr("d", path);
 
-        svg.insert("path", ".graticule")
-            .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
-            .attr("class", "state-boundary")
-            .attr("d", path);
-
     });
 
     d3.select(self.frameElement).style("height", height + "px");
+}
 
+function dom_createCounties(state_name){
+
+    d3.json("data/results.json", function(error, us) {
+        if (error) throw error;
+
+        g.append("g")
+            .selectAll("path")
+            .data(topojson.feature(us, us.objects.counties).features)
+            .enter().append("path")
+            .attr("d", path)
+            .attr("class", "county")
+            .style("fill", function(d) {
+
+                return "rgba(0, 0, 0, 0.0)";
+            })
+            .style("stroke", function(d) {
+                return "rgba(170, 170, 144, 0.27)";
+            })
+            .style("stroke-width", function(d) {
+                return "2px";
+            })
+            .on("mouseover", function(d) {
+                d;
+            })
+            .on("mouseout", function(d) {
+
+            }).on("mousedown", function(d) {
+                d;
+            });
+    });
 }
 
 // Comminucations Management
@@ -186,3 +218,103 @@ function event_onLinkClicked(e){
     var url = "dataVis.html?chosenData=" + selectedButtonName;
     window.open(url, '_blank');
 }
+
+function clear_set_state_fill(state){
+    svg.selectAll("path")
+        .style("fill", function(d) {
+            if(d.id == state.id) return "#FFFFFF";
+            else return "#CCCCCC"
+        });
+}
+
+function state_clicked(d) {
+    var state = null
+
+    if (d && state !== d) {
+        var xyz = get_xyz(d);
+        state = d;
+        var state_name = state.properties.name;
+        dom_createCounties(state_name);
+        clear_set_state_fill(state);
+        zoom(xyz);
+    } else {
+        state = null;
+    }
+}
+
+
+//Helper Functions
+function zoom(xyz) {
+    g.transition()
+        .duration(750)
+        .attr("transform", "translate(" + projection.translate() + ")scale(" + xyz[2] + ")translate(-" + xyz[0] + ",-" + xyz[1] + ")")
+        .selectAll(["#countries", "#states", "#cities"])
+        .style("stroke-width", 1.0 / xyz[2] + "px")
+        .selectAll(".city")
+        .attr("d", path.pointRadius(20.0 / xyz[2]));
+}
+
+function get_xyz(d) {
+    var bounds = path.bounds(d);
+    var w_scale = (bounds[1][0] - bounds[0][0]) / width;
+    var h_scale = (bounds[1][1] - bounds[0][1]) / height;
+    var z = .90 / Math.max(w_scale, h_scale);
+    var x = (bounds[1][0] + bounds[0][0]) / 2;
+    var y = (bounds[1][1] + bounds[0][1]) / 2 + (height / z / 60);
+    return [x, y, z];
+}
+
+function string_similarity(sa1, sa2){
+    // Compare two strings to see how similar they are.
+    // Answer is returned as a value from 0 - 1
+    // 1 indicates a perfect similarity (100%) while 0 indicates no similarity (0%)
+    // Algorithm is set up to closely mimic the mathematical formula from
+    // the article describing the algorithm, for clarity.
+    // Algorithm source site: http://www.catalysoft.com/articles/StrikeAMatch.html
+    // (Most specifically the slightly cryptic variable names were written as such
+    // to mirror the mathematical implementation on the source site)
+    //
+    // 2014-04-03
+    // Found out that the algorithm is an implementation of the Sørensen–Dice coefficient [1]
+    // [1] http://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient
+    //
+    // The algorithm is an n-gram comparison of bigrams of characters in a string
+
+
+    // for my purposes, comparison should not check case or whitespace
+    var s1 = sa1.replace(/\s/g, "").toLowerCase();
+    var s2 = sa2.replace(/\s/g, "").toLowerCase();
+
+    function intersect(arr1, arr2) {
+        // I didn't write this.  I'd like to come back sometime
+        // and write my own intersection algorithm.  This one seems
+        // clean and fast, though.  Going to try to find out where
+        // I got it for attribution.  Not sure right now.
+        var r = [], o = {}, l = arr2.length, i, v;
+        for (i = 0; i < l; i++) {
+            o[arr2[i]] = true;
+        }
+        l = arr1.length;
+        for (i = 0; i < l; i++) {
+            v = arr1[i];
+            if (v in o) {
+                r.push(v);
+            }
+        }
+        return r;
+    }
+
+    var pairs = function(s){
+        // Get an array of all pairs of adjacent letters in a string
+        var pairs = [];
+        for(var i = 0; i < s.length - 1; i++){
+            pairs[i] = s.slice(i, i+2);
+        }
+        return pairs;
+    }
+
+    var similarity_num = 2 * intersect(pairs(s1), pairs(s2)).length;
+    var similarity_den = pairs(s1).length + pairs(s2).length;
+    var similarity = similarity_num / similarity_den;
+    return similarity;
+};
