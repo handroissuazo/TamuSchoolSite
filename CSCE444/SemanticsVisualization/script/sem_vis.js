@@ -5,12 +5,17 @@
 var _data_overviewCounts = {};
 var dynamicCounts = {};
 var _data_assets_D = [];
+var _state_abbr = [];
+var _state_;
+var dateData = [];
 var svg;
 var path;
 var g;
 var projection;
 var width;
 var height;
+
+var bInStateView = false;
 
 $( document ).ready(function() {
     // Init of Globals
@@ -68,16 +73,16 @@ function dom_createDateFilteredUSGraph(startDate, endDate, interval) {
 }
 
 function dom_createDateFilteredStateGraph(state){
-    var startDate = "1998-02-28";
-    var endDate = $("#datepicker").datepicker("getDate");
+    var startDate = $('#from').val();
+    var endDate = $('#to').val();
     var interval = "year";
 
-    var dateData = makeCountsObjectForStateGraph(startDate, interval, endDate, state);
+    var dateData = event_onStateSelected_makeCountsObjectFromExistingDateData(state);
 
     for(var i = 0; i < dateData.length; ++i){
         var totalDcounts = 0;
         for (var state in dateData[i].Counts){
-            totalDcounts += dateData[i].Counts[state].D;
+            totalDcounts += dateData[i]["Counts"][state].D;
         }
         dateData[i].totalCount = totalDcounts;
     }
@@ -86,14 +91,47 @@ function dom_createDateFilteredStateGraph(state){
 }
 
 function dom_createAndBindDatePicker() {
-    $("#datepicker").datepicker({
-        onSelect: function (dateText) {
-            dynamicCounts = updateCountsByDate(Date.parse(dateText));
-            dom_createDateFilteredUSGraph("1998-02-28", dateText, "year");
-        },
-        dateFormat: 'yy-mm-dd'
+    $( "#from" ).datepicker({
+        defaultDate: "+1w",
+        changeMonth: true,
+        changeYear: true,
+        numberOfMonths: 1,
+        dateFormat: 'yy-mm-dd',
+        onSelect: function( dateText ) {
+            var startDate = $("#from").val();
+            var endDate = $("#to").val();
+            dynamicCounts = updateCountsByDate(endDate);
+            if(bInStateView){
+                makeCountsObjectForOverviewGraph(startDate, "year", endDate);
+                event_stateClicked(_state_);
+            }
+            else {
+                dom_createDateFilteredUSGraph(startDate, endDate, "year");
+            }
+        }
     });
-    $("#datepicker").datepicker('setDate', new Date());
+    $( "#to" ).datepicker({
+        defaultDate: "+1w",
+        changeMonth: true,
+        changeYear: true,
+        numberOfMonths: 1,
+        dateFormat: 'yy-mm-dd',
+        onSelect: function( dateText ) {
+            var startDate = $("#from").val();
+            var endDate = $("#to").val();
+            dynamicCounts = updateCountsByDate(endDate);
+            if(bInStateView){
+                makeCountsObjectForOverviewGraph(startDate, "year", endDate);
+                event_stateClicked(_state_);
+            }
+            else {
+                dom_createDateFilteredUSGraph(startDate, endDate, "year");
+            }
+        }
+    });
+
+    $("#to").datepicker('setDate', new Date());
+    $("#from").datepicker('setDate', new Date(883712800000));
 }
 
 function dom_hideLoadingIndicator(){
@@ -148,7 +186,7 @@ function dom_CreateMap(){
                 div.transition()
                     .duration(1)
                     .style("opacity", .9);
-                div .html(d.properties.name + "<br/>"  + dynamicCounts[d.properties.name].D)
+                div .html(d.properties.name + "<br/> Total # of militarized assets: "  + dynamicCounts[d.properties.name].D)
                     .style("left", (d3.event.pageX) + "px")
                     .style("top", (d3.event.pageY - 28) + "px");
             })
@@ -206,6 +244,7 @@ function dom_createCounties(state_name){
 // Comminucations Management
 function comm_init() {
     comm_getLesoOverviewCounts();
+    comm_getStateAbbr();
     comm_GetLesoD();
 }
 
@@ -220,6 +259,32 @@ function comm_getLesoOverviewCounts(){
         complete: function() {
             dom_hideLoadingIndicator();
             dom_CreateMap();
+        },
+        error: function() {
+            // Todo: add some error handling to show the user something went wrong.
+        }
+    });
+}
+
+function comm_getStateAbbr(){
+    $.ajax({        //These are the militarized assets and will be the main talking point of my project.
+        url: 'data/states_titlecase.json',
+        success: function(data) {
+            _state_abbr = data;
+        }
+    });
+}
+
+function comm_GetLesoD(){
+    $.ajax({        //These are the militarized assets and will be the main talking point of my project.
+        url: 'data/lesoD.json',
+        beforeSend: function() {},
+        success: function(data) {
+            _data_assets_D = data;
+            dom_createOverviewGraph();
+        },
+        complete: function() {
+            // Todo: add some post processing on the information.
         },
         error: function() {
             // Todo: add some error handling to show the user something went wrong.
@@ -251,22 +316,19 @@ function updateCountsByDate(date){
 }
 
 function makeCountsObjectForOverviewGraph(startDate, interval, endDate){
-    var dateData = [];
+    dateData = [];
     var d1 = Date.parse(startDate);
     var d2 = Date.parse(endDate);
-    var intervalInSeconds = 31556926000; //year by default
+    var intervalInSeconds = 31556926000; //use year by default
 
-    switch(interval){
-        case "day":
-            intervalInSeconds = 86400000;
-            break;
-        case "week":
-            intervalInSeconds = 604800000;
-            break;
-        case "month":
-            intervalInSeconds = 2629743000;
-            break;
-        //case year will keep the value the same.
+    if (d2-d1 < intervalInSeconds * 2){ //If less than 2 years
+        intervalInSeconds = 2629743000; // use Interval month
+        if (d2-d1 < intervalInSeconds * 2){ // If less than 2 months
+            intervalInSeconds = 604800000; //use Interval week
+            if (d2-d1 < intervalInSeconds * 2){ // If less than 2 weeks
+                intervalInSeconds = 604800000;  //use Interval day.
+            }
+        }
     }
 
     for (var currentDate = d1; currentDate <= d2; currentDate += intervalInSeconds ) {
@@ -280,8 +342,24 @@ function makeCountsObjectForOverviewGraph(startDate, interval, endDate){
     return dateData;
 }
 
-function makeCountsObjectForStateGraph(startDate, interval, endDate, state){
-    var dateData = [];
+function event_onStateSelected_makeCountsObjectFromExistingDateData(state){
+    var newDateData = [];
+    for (var i = 0; i < dateData.length; ++i) {
+        var graphObj = {};
+        var countSnapshot = {};
+        countSnapshot[state] = {};
+        countSnapshot[state].D = dateData[i]["Counts"][state].D;
+
+        graphObj.Date = dateData[i].Date;
+        graphObj.Counts = countSnapshot;
+        newDateData.push(graphObj);
+    }
+
+    return newDateData;
+}
+
+function event_onDateChangedOnState_makeCountsObjectForStateGraph(startDate, interval, endDate, state){
+    dateData = [];
     var d1 = Date.parse(startDate);
     var d2 = Date.parse(endDate);
     var intervalInSeconds = 31556926000; //year by default
@@ -318,7 +396,7 @@ function updateCountsByDateRangeAndState(startDate, currentDate, state){
     var d1 = Date.parse(startDate);
     for (var i = 0; i < _data_assets_D.length; ++i){
         var d2 = Date.parse(_data_assets_D[i]["Ship Date"]);
-        if (d1 < d2 <= currentDate && _data_assets_D[i].State == state) {
+        if (d1 < d2 && d2 <= currentDate && _data_assets_D[i].State == state) {
             newCounts[state].D++;
         }
     }
@@ -326,22 +404,7 @@ function updateCountsByDateRangeAndState(startDate, currentDate, state){
     return newCounts;
 }
 
-function comm_GetLesoD(){
-    $.ajax({        //These are the militarized assets and will be the main talking point of my project.
-        url: 'data/lesoD.json',
-        beforeSend: function() {},
-        success: function(data) {
-            _data_assets_D = data;
-            dom_createOverviewGraph();
-        },
-        complete: function() {
-            // Todo: add some post processing on the information.
-        },
-        error: function() {
-            // Todo: add some error handling to show the user something went wrong.
-        }
-    });
-}
+
 
 // Event Handling
 function event_onLinkClicked(e){
@@ -368,26 +431,55 @@ function dom_set_overview_state_fill(){
         })
 }
 
+function dom_updateInformationForState(state){
+    $('#InfoBarTitle').empty();
+    var stateName = "";
+    for(var i = 0; i < _state_abbr.length; ++i){
+        if (state == _state_abbr[i].abbreviation){
+            stateName = _state_abbr[i].name;
+            break;
+        }
+    }
+    $('#InfoBarTitle').html(stateName);
+    $('#ChangingInformation').empty();
+    $('#ChangingInformation').html("Welcome to " + stateName + ". Where the total number of militarized assets is: "+ _data_overviewCounts[state].D + ". All states show an increase in assets over time and seem to have a large jump between 2005 and 2006. It's possible that the database became used more religiously around that time to cause such a jump across the country.")
+}
+
+function dom_updateInformationForOverview(){
+    $('#InfoBarTitle').empty();
+
+    $('#InfoBarTitle').html("United States");
+    $('#ChangingInformation').empty();
+    $('#ChangingInformation').html("Nonetheless, this map shows the distribution of militarized assets in the United States. Do police need so much? Does this contribute to violence around the country?")
+}
+
 function event_stateClicked(d) {
     var state = null
 
     if (d && state !== d) {
-        //var xyz = get_xyz(d);
+        bInStateView = true;
         state = d;
+        _state_ = state;
         dom_clear_set_state_fill(state);
-        //zoom(xyz);
         setTimeout(function(d){
-            dom_createDateFilteredStateGraph(state.properties.name);}
-            , 1000);
+            dom_createDateFilteredStateGraph(state.properties.name);
+        }, 200);
         dom_showOverviewButton();
+        dom_updateInformationForState(state.properties.name);
+
     } else {
         state = null;
     }
 }
 
 function event_backToOverview(){
+    bInStateView = false;
     dom_hideOverviewButton();
     dom_set_overview_state_fill();
+    var startDate = $('#from').val();
+    var endDate = $('#to').val();
+    dom_createDateFilteredUSGraph(startDate, endDate, "year");
+    dom_updateInformationForOverview();
 }
 
 //Helper Functions
