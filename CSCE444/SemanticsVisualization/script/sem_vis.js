@@ -210,6 +210,20 @@ function dom_CreateMap(){
 
 }
 
+function dom_createEventsSlideOut(){
+    $('.slide-out-div').tabSlideOut({
+        tabHandle: '.handle',                              //class of the element that will be your tab
+        pathToTabImage: 'images/contact_tab.gif',          //path to the image for the tab *required*
+        imageHeight: '122px',                               //height of tab image *required*
+        imageWidth: '40px',                               //width of tab image *required*
+        tabLocation: 'left',                               //side of screen where tab lives, top, right, bottom, or left
+        speed: 300,                                        //speed of animation
+        action: 'click',                                   //options: 'click' or 'hover', action to trigger animation
+        topPos: '200px',                                   //position from the top
+        fixedPosition: false                               //options: true makes it stick(fixed position) on scroll
+    });
+}
+
 function dom_createCounties(state_name){
 
     d3.json("data/results.json", function(error, us) {
@@ -259,6 +273,7 @@ function comm_getLesoOverviewCounts(){
         complete: function() {
             dom_hideLoadingIndicator();
             dom_CreateMap();
+            dom_createEventsSlideOut();
         },
         error: function() {
             // Todo: add some error handling to show the user something went wrong.

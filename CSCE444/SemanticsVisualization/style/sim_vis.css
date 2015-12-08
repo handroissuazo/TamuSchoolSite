@@ -125,3 +125,10 @@ path {
 {
     width: 73px;
 }
+
+.slide-out-div {
+    padding: 20px;
+    width: 250px;
+    background: #ccc;
+    border: 1px solid #29216d;
+}
