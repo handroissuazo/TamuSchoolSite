@@ -38,9 +38,6 @@ function dom_hideOverviewButton(){
 }
 
 function dom_bindButtons(){
-    //$('body').on('click', '.linkButton', function(event){
-    //    event_onLinkClicked(event);
-    //});
     $("#ToOverview").on('click', event_backToOverview);
 }
 
@@ -55,7 +52,7 @@ function dom_createOverviewGraph(){
         dateData[i].totalCount = totalDcounts;
     }
 
-    makeGraph(dateData, "Increase in military assets in the US since 1998");
+    dom_makeGraph(dateData, "Increase in military assets in the US since 1998");
 }
 
 function dom_createDateFilteredUSGraph(startDate, endDate, interval) {
@@ -69,7 +66,7 @@ function dom_createDateFilteredUSGraph(startDate, endDate, interval) {
         dateData[i].totalCount = totalDcounts;
     }
 
-    makeGraph(dateData, "Increase in military assets in the US from "+ startDate + " to " + endDate);
+    dom_makeGraph(dateData, "Increase in military assets in the US from "+ startDate + " to " + endDate);
 }
 
 function dom_createDateFilteredStateGraph(state){
@@ -87,7 +84,7 @@ function dom_createDateFilteredStateGraph(state){
         dateData[i].totalCount = totalDcounts;
     }
 
-    makeGraph(dateData, "Increase in military assets in "+ state +" from "+ startDate + " to " + endDate);
+    dom_makeGraph(dateData, "Increase in military assets in "+ state +" from "+ startDate + " to " + endDate);
 }
 
 function dom_createAndBindDatePicker() {
@@ -144,7 +141,7 @@ function dom_showLoadingIndicator(){
 
 function dom_CreateMap(){
 
-    width = 960;
+    width = 1000;
     height = 500;
 
     projection = d3.geo.albersUsa()
@@ -213,14 +210,22 @@ function dom_CreateMap(){
 function dom_createEventsSlideOut(){
     $('.slide-out-div').tabSlideOut({
         tabHandle: '.handle',                              //class of the element that will be your tab
-        pathToTabImage: 'images/contact_tab.gif',          //path to the image for the tab *required*
-        imageHeight: '122px',                               //height of tab image *required*
-        imageWidth: '40px',                               //width of tab image *required*
+        pathToTabImage: 'images/events_tab.png',          //path to the image for the tab *required*
+        imageHeight: '244px',                               //height of tab image *required*
+        imageWidth: '80px',                               //width of tab image *required*
         tabLocation: 'left',                               //side of screen where tab lives, top, right, bottom, or left
         speed: 300,                                        //speed of animation
         action: 'click',                                   //options: 'click' or 'hover', action to trigger animation
         topPos: '200px',                                   //position from the top
         fixedPosition: false                               //options: true makes it stick(fixed position) on scroll
+    });
+
+    for(var i = 0; i < _important_dates.length; ++i){
+        $('#Events').append("<p class='linkButton' id='" + _important_dates[i].title + "'>" + _important_dates[i].title + "</p>");
+    }
+
+    $('#Events').on('click', '.linkButton', function(event){
+        event_onEventClicked(event);
     });
 }
 
@@ -255,8 +260,108 @@ function dom_createCounties(state_name){
     });
 }
 
+function dom_clear_set_state_fill(state){
+    g.selectAll("path").transition()
+        .duration(450)
+        .style("fill", function (d) {
+            if (d.id == state.id) return "#FFFFFF";
+            else return "#CCCCCC"
+        });
+}
+
+function dom_set_overview_state_fill(){
+    g.selectAll("path").transition()
+        .duration(450)
+        .style("fill", function(d) {
+            var value = dynamicCounts[d.properties.name].D;
+            return "rgba(173, 15, 15, " + value / 10000 + ")";
+        })
+}
+
+function dom_updateInformationForState(state){
+    $('#InfoBarTitle').empty();
+    var stateName = "";
+    for(var i = 0; i < _state_abbr.length; ++i){
+        if (state == _state_abbr[i].abbreviation){
+            stateName = _state_abbr[i].name;
+            break;
+        }
+    }
+    $('#InfoBarTitle').html(stateName);
+    $('#ChangingInformation').empty();
+    $('#ChangingInformation').html("Welcome to " + stateName + ". Where the total number of militarized assets is: "+ _data_overviewCounts[state].D + ". All states show an increase in assets over time and seem to have a large jump between 2005 and 2006. It's possible that the database became used more religiously around that time to cause such a jump across the country.")
+}
+
+function dom_updateInformationForOverview(){
+    $('#InfoBarTitle').empty();
+
+    $('#InfoBarTitle').html("United States");
+    $('#ChangingInformation').empty();
+    $('#ChangingInformation').html("Recently, police brutality has been on the forefront of media tag lines and police departments have come under scrutiny from their respective constituencies. </br> </br> Nonetheless, this map shows the distribution of militarized assets in the United States. Do police need so much? Does this contribute to violence around the country?")
+}
+
+function dom_updateInformationForEvent(eventName) {
+    $('#InfoBarTitle').empty();
+    $('#InfoBarTitle').html(eventName);
+    $('#ChangingInformation').empty();
+
+    var eventDate;
+    for (var i = 0; i < _important_dates.length; ++i){
+        if (eventName == _important_dates[i].title) {
+            $('#ChangingInformation').html(_important_dates[i].description + "</br> </br> This event took place: " + _important_dates[i].date)
+            eventDate = _important_dates[i].date;
+
+            $('#LinksAndVideos').empty();
+            if(_important_dates[i].link){
+                $('#LinksAndVideos').append("<iframe width='380' height='300' src='" + _important_dates[i].link + "'></iframe>");
+            }
+
+            if(_important_dates[i].video){
+                var url = _important_dates[i].video;
+                $('#LinksAndVideos').append("<iframe width='380' height='300' src='" + url + "'frameborder='0' allowfullscreen></iframe>");
+            }
+            break;
+        }
+    }
+
+    var startDate = Date.parse(eventDate) - 3 * 2629743000;
+    var endDate = Date.parse(eventDate) + 3 * 2629743000;
+
+    $("#to").datepicker('setDate', new Date(endDate));
+    $("#from").datepicker('setDate', new Date(startDate));
+
+    startDate = $('#from').val();
+    endDate = $('#to').val();
+
+    //Change Graphs for event
+    dynamicCounts = updateCountsByDate(endDate);
+    if(bInStateView){
+        makeCountsObjectForOverviewGraph(startDate, "year", endDate);
+         var d = _state_;
+        var state = null
+        if (d && state !== d) {
+            bInStateView = true;
+            state = d;
+            _state_ = state;
+            dom_clear_set_state_fill(state);
+            setTimeout(function(d){
+                dom_createDateFilteredStateGraph(state.properties.name);
+            }, 200);
+            dom_showOverviewButton();
+        }
+        else {
+            state = null;
+        }
+    }
+    else {
+        dom_createDateFilteredUSGraph(startDate, endDate, "year");
+    }
+
+}
+
 // Comminucations Management
 function comm_init() {
+    comm_getEvents();
     comm_getLesoOverviewCounts();
     comm_getStateAbbr();
     comm_GetLesoD();
@@ -273,7 +378,6 @@ function comm_getLesoOverviewCounts(){
         complete: function() {
             dom_hideLoadingIndicator();
             dom_CreateMap();
-            dom_createEventsSlideOut();
         },
         error: function() {
             // Todo: add some error handling to show the user something went wrong.
@@ -307,54 +411,61 @@ function comm_GetLesoD(){
     });
 }
 
-function updateCountsByDate(date){
-    //Date must be in the format = "2011-11-04"
-    var newCounts = jQuery.extend(true, {}, _data_overviewCounts);
-    var d1 = date;
-    for (var i = 0; i < _data_assets_D.length; ++i){
-        var d2 = Date.parse(_data_assets_D[i]["Ship Date"]);
-        if (d1 < d2) {
-            newCounts[_data_assets_D[i].State].D--;
+function comm_getEvents(){
+    $.ajax({
+        url: 'data/ImportantDates.json',
+        success: function(data) {
+            _important_dates = data;
+        },
+        complete: function() {
+            dom_createEventsSlideOut();
+        },
+        error: function() {
+
         }
-    }
+    });
 
-    svg.selectAll("path")
-        .style("fill", function(d) {
-            if (d.type == "Feature") {
-                var value = newCounts[d.properties.name].D;
-                return "rgba(173, 15, 15, " + value / newCounts["CA"].D + ")";
-            }
-        });
-
-
-    return newCounts;
 }
 
-function makeCountsObjectForOverviewGraph(startDate, interval, endDate){
-    dateData = [];
-    var d1 = Date.parse(startDate);
-    var d2 = Date.parse(endDate);
-    var intervalInSeconds = 31556926000; //use year by default
+// Event Handling
+function event_onLinkClicked(e){
+    var selectedButtonName = e.target.id;
+    var url = "dataVis.html?chosenData=" + selectedButtonName;
+    window.open(url, '_blank');
+}
 
-    if (d2-d1 < intervalInSeconds * 2){ //If less than 2 years
-        intervalInSeconds = 2629743000; // use Interval month
-        if (d2-d1 < intervalInSeconds * 2){ // If less than 2 months
-            intervalInSeconds = 604800000; //use Interval week
-            if (d2-d1 < intervalInSeconds * 2){ // If less than 2 weeks
-                intervalInSeconds = 604800000;  //use Interval day.
-            }
-        }
+function event_onEventClicked(e){
+    var selectedButtonName = e.target.id;
+    dom_updateInformationForEvent(selectedButtonName);
+}
+
+function event_stateClicked(d) {
+    var state = null
+
+    if (d && state !== d) {
+        bInStateView = true;
+        state = d;
+        _state_ = state;
+        dom_clear_set_state_fill(state);
+        setTimeout(function(d){
+            dom_createDateFilteredStateGraph(state.properties.name);
+        }, 200);
+        dom_showOverviewButton();
+        dom_updateInformationForState(state.properties.name);
+
+    } else {
+        state = null;
     }
+}
 
-    for (var currentDate = d1; currentDate <= d2; currentDate += intervalInSeconds ) {
-        var countSnapshot = updateCountsByDate(currentDate);
-        var graphObj = {};
-        graphObj.Date = currentDate;
-        graphObj.Counts = countSnapshot;
-        dateData.push(graphObj);
-    }
-
-    return dateData;
+function event_backToOverview(){
+    bInStateView = false;
+    dom_hideOverviewButton();
+    dom_set_overview_state_fill();
+    var startDate = $('#from').val();
+    var endDate = $('#to').val();
+    dom_createDateFilteredUSGraph(startDate, endDate, "year");
+    dom_updateInformationForOverview();
 }
 
 function event_onStateSelected_makeCountsObjectFromExistingDateData(state){
@@ -403,100 +514,6 @@ function event_onDateChangedOnState_makeCountsObjectForStateGraph(startDate, int
     return dateData;
 }
 
-function updateCountsByDateRangeAndState(startDate, currentDate, state){
-    //Date must be in the format = "2011-11-04"
-    var newCounts = {};
-    newCounts[state] = {};
-    newCounts[state].D = 0;
-    var d1 = Date.parse(startDate);
-    for (var i = 0; i < _data_assets_D.length; ++i){
-        var d2 = Date.parse(_data_assets_D[i]["Ship Date"]);
-        if (d1 < d2 && d2 <= currentDate && _data_assets_D[i].State == state) {
-            newCounts[state].D++;
-        }
-    }
-
-    return newCounts;
-}
-
-
-
-// Event Handling
-function event_onLinkClicked(e){
-    var selectedButtonName = e.target.id;
-    var url = "dataVis.html?chosenData=" + selectedButtonName;
-    window.open(url, '_blank');
-}
-
-function dom_clear_set_state_fill(state){
-    g.selectAll("path").transition()
-        .duration(450)
-        .style("fill", function (d) {
-            if (d.id == state.id) return "#FFFFFF";
-            else return "#CCCCCC"
-        });
-}
-
-function dom_set_overview_state_fill(){
-    g.selectAll("path").transition()
-        .duration(450)
-        .style("fill", function(d) {
-            var value = dynamicCounts[d.properties.name].D;
-            return "rgba(173, 15, 15, " + value / 10000 + ")";
-        })
-}
-
-function dom_updateInformationForState(state){
-    $('#InfoBarTitle').empty();
-    var stateName = "";
-    for(var i = 0; i < _state_abbr.length; ++i){
-        if (state == _state_abbr[i].abbreviation){
-            stateName = _state_abbr[i].name;
-            break;
-        }
-    }
-    $('#InfoBarTitle').html(stateName);
-    $('#ChangingInformation').empty();
-    $('#ChangingInformation').html("Welcome to " + stateName + ". Where the total number of militarized assets is: "+ _data_overviewCounts[state].D + ". All states show an increase in assets over time and seem to have a large jump between 2005 and 2006. It's possible that the database became used more religiously around that time to cause such a jump across the country.")
-}
-
-function dom_updateInformationForOverview(){
-    $('#InfoBarTitle').empty();
-
-    $('#InfoBarTitle').html("United States");
-    $('#ChangingInformation').empty();
-    $('#ChangingInformation').html("Nonetheless, this map shows the distribution of militarized assets in the United States. Do police need so much? Does this contribute to violence around the country?")
-}
-
-function event_stateClicked(d) {
-    var state = null
-
-    if (d && state !== d) {
-        bInStateView = true;
-        state = d;
-        _state_ = state;
-        dom_clear_set_state_fill(state);
-        setTimeout(function(d){
-            dom_createDateFilteredStateGraph(state.properties.name);
-        }, 200);
-        dom_showOverviewButton();
-        dom_updateInformationForState(state.properties.name);
-
-    } else {
-        state = null;
-    }
-}
-
-function event_backToOverview(){
-    bInStateView = false;
-    dom_hideOverviewButton();
-    dom_set_overview_state_fill();
-    var startDate = $('#from').val();
-    var endDate = $('#to').val();
-    dom_createDateFilteredUSGraph(startDate, endDate, "year");
-    dom_updateInformationForOverview();
-}
-
 //Helper Functions
 function zoom(xyz) {
     g.transition()
@@ -519,7 +536,7 @@ function get_xyz(d) {
 }
 
 // Graph scripts
-function makeGraph(dateData, graphTitle){
+function dom_makeGraph(dateData, graphTitle){
     $("#GraphSpace").empty();
     $("#GraphTitle").empty();
     $("#GraphTitle").html(graphTitle);
@@ -707,5 +724,102 @@ function makeGraph(dateData, graphTitle){
                     y(d.close) + ")")
                 .attr("x2", width + width);
         }
-
 }
+
+function updateCountsByDate(date){
+    //Date must be in the format = "2011-11-04"
+    var newCounts = jQuery.extend(true, {}, _data_overviewCounts);
+    var d1 = date;
+    for (var i = 0; i < _data_assets_D.length; ++i){
+        var d2 = Date.parse(_data_assets_D[i]["Ship Date"]);
+        if (d1 < d2) {
+            newCounts[_data_assets_D[i].State].D--;
+        }
+    }
+
+    svg.selectAll("path")
+        .style("fill", function(d) {
+            if (d.type == "Feature") {
+                var value = newCounts[d.properties.name].D;
+                return "rgba(173, 15, 15, " + value / newCounts["CA"].D + ")";
+            }
+        });
+
+
+    return newCounts;
+}
+
+function makeCountsObjectForOverviewGraph(startDate, interval, endDate){
+    dateData = [];
+    var d1 = Date.parse(startDate);
+    var d2 = Date.parse(endDate);
+    var intervalInSeconds = 31556926000; //use year by default
+
+    if (d2-d1 < intervalInSeconds * 2){ //If less than 2 years
+        intervalInSeconds = 2629743000; // use Interval month
+        if (d2-d1 < intervalInSeconds * 2){ // If less than 2 months
+            intervalInSeconds = 604800000; //use Interval week
+            if (d2-d1 < intervalInSeconds * 2){ // If less than 2 weeks
+                intervalInSeconds = 604800000;  //use Interval day.
+            }
+        }
+    }
+
+    for (var currentDate = d1; currentDate <= d2; currentDate += intervalInSeconds ) {
+        var countSnapshot = updateCountsByDate(currentDate);
+        var graphObj = {};
+        graphObj.Date = currentDate;
+        graphObj.Counts = countSnapshot;
+        dateData.push(graphObj);
+    }
+
+    return dateData;
+}
+
+function updateCountsByDateRangeAndState(startDate, currentDate, state){
+    //Date must be in the format = "2011-11-04"
+    var newCounts = {};
+    newCounts[state] = {};
+    newCounts[state].D = 0;
+    var d1 = Date.parse(startDate);
+    for (var i = 0; i < _data_assets_D.length; ++i){
+        var d2 = Date.parse(_data_assets_D[i]["Ship Date"]);
+        if (d1 < d2 && d2 <= currentDate && _data_assets_D[i].State == state) {
+            newCounts[state].D++;
+        }
+    }
+
+    return newCounts;
+}
+
+var _important_dates = [
+    {
+        "title": "Roger Carlos Beating",
+        "description": "Two officers part of an undercover task force mistakenly targeted and wrongly beat Roger Carlos using excessive force and leaving him paralyzed after surgery for his wounds.",
+        "link": "http://www.kens5.com/story/news/investigations/i-team/2015/11/20/man-beaten-sapd-officers-paralyzed-after-complications-surgery/76120736/?utm_source=hootsuite",
+        "date": "2014-05-20"
+    },
+    {
+        "title": "Roy Middleton Shooting",
+        "description": "Roy Middleton, a 60-year-old man from Pensacola, Florida, was shot at 15 times by the police after being mistaken for a car thief. Thirteen out of fifteen bullets missed the target and Middleton survived, left with a shattered leg.",
+        "link": "http://stopbeingfamous.com/2013/12/26/top-10-police-brutality-moments-of-2013/_3308199.html",
+        "date": "2013-12-02"
+    },
+    {
+        "title": "Oscar Grant Shooting",
+        "description": "Responding to reports of a fight on a crowded Bay Area Rapid Transit train returning from San Francisco, BART Police officers detained Oscar Grant and several other passengers on the platform at the Fruitvale BART Station. An officer drew his gun and shot Grant once in the back after claiming that he was resisting arrest. Grant was unarmed. He later died sparking a fury of protests and a trial.",
+        "video": "https://www.youtube.com/embed/ERsF0beRO5Q",
+        "date": "2009-01-01",
+        "location": "Oakland, California"
+    },
+    {
+        "title": "Treyvon Martin Shooting",
+        "description": "Even though, this is not directly associated with police departments, you can analyze the effects of previous or post transgressions on police departments across the country.",
+        "date": "2012-02-26"
+    },
+    {
+        "title": "George Zimmerman Acquittal",
+        "description": "Even though, this is not directly associated with police departments, you can analyze the effects of the acquittal on police departments across the country.",
+        "date": "2013-07-13",
+    },
+];
