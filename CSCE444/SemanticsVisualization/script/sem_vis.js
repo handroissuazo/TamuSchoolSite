@@ -10,11 +10,12 @@ var _state_;
 var dateData = [];
 var svg;
 var path;
+var div;
 var g;
 var projection;
 var width;
 var height;
-
+var bInEventView = false;
 var bInStateView = false;
 
 $( document ).ready(function() {
@@ -42,7 +43,7 @@ function dom_bindButtons(){
 }
 
 function dom_createOverviewGraph(){
-    var dateData = makeCountsObjectForOverviewGraph("1998-02-28", "year", "2015-06-01");
+    var dateData = makeCountsObjectForOverviewGraph("2000-01-01", "year", "2015-12-31");
 
     for(var i = 0; i < dateData.length; ++i){
         var totalDcounts = 0;
@@ -52,7 +53,7 @@ function dom_createOverviewGraph(){
         dateData[i].totalCount = totalDcounts;
     }
 
-    dom_makeGraph(dateData, "Increase in military assets in the US since 1998");
+    dom_makeGraph(dateData, "Increase in military assets in the US since 2000");
 }
 
 function dom_createDateFilteredUSGraph(startDate, endDate, interval) {
@@ -70,8 +71,9 @@ function dom_createDateFilteredUSGraph(startDate, endDate, interval) {
 }
 
 function dom_createDateFilteredStateGraph(state){
-    var startDate = $('#from').val();
-    var endDate = $('#to').val();
+    var dateValues = $("#slider").dateRangeSlider("values");
+    var startDate = dateValues.min.getFullYear()  + '-' +  (dateValues.min.getMonth() + 1) + '-' + dateValues.min.getDate();
+    var endDate = dateValues.max.getFullYear() + '-' + (dateValues.max.getMonth() + 1) + '-' + dateValues.max.getDate();
     var interval = "year";
 
     var dateData = event_onStateSelected_makeCountsObjectFromExistingDateData(state);
@@ -88,47 +90,24 @@ function dom_createDateFilteredStateGraph(state){
 }
 
 function dom_createAndBindDatePicker() {
-    $( "#from" ).datepicker({
-        defaultDate: "+1w",
-        changeMonth: true,
-        changeYear: true,
-        numberOfMonths: 1,
-        dateFormat: 'yy-mm-dd',
-        onSelect: function( dateText ) {
-            var startDate = $("#from").val();
-            var endDate = $("#to").val();
-            dynamicCounts = updateCountsByDate(endDate);
-            if(bInStateView){
-                makeCountsObjectForOverviewGraph(startDate, "year", endDate);
-                event_stateClicked(_state_);
-            }
-            else {
-                dom_createDateFilteredUSGraph(startDate, endDate, "year");
-            }
+    $("#slider").dateRangeSlider();
+    $("#slider").dateRangeSlider("bounds", new Date(946752097000), new Date());
+    $("#slider").dateRangeSlider("min", new Date(946752097000));
+    $("#slider").dateRangeSlider("max", new Date());
+    $("#slider").bind("valuesChanged", function(e, data){
+        var dateValues = $("#slider").dateRangeSlider("values");
+        var startDate = dateValues.min.getFullYear()  + '-' +  (dateValues.min.getMonth() + 1) + '-' + dateValues.min.getDate();
+        var endDate = dateValues.max.getFullYear() + '-' + (dateValues.max.getMonth() + 1) + '-' + dateValues.max.getDate();
+        dynamicCounts = updateCountsByDate(Date.parse(endDate));
+        if(bInStateView){
+            makeCountsObjectForOverviewGraph(startDate, "year", endDate);
+            event_stateClicked(_state_);
         }
-    });
-    $( "#to" ).datepicker({
-        defaultDate: "+1w",
-        changeMonth: true,
-        changeYear: true,
-        numberOfMonths: 1,
-        dateFormat: 'yy-mm-dd',
-        onSelect: function( dateText ) {
-            var startDate = $("#from").val();
-            var endDate = $("#to").val();
-            dynamicCounts = updateCountsByDate(endDate);
-            if(bInStateView){
-                makeCountsObjectForOverviewGraph(startDate, "year", endDate);
-                event_stateClicked(_state_);
-            }
-            else {
-                dom_createDateFilteredUSGraph(startDate, endDate, "year");
-            }
+        else {
+            dom_createDateFilteredUSGraph(startDate, endDate, "year");
         }
     });
 
-    $("#to").datepicker('setDate', new Date());
-    $("#from").datepicker('setDate', new Date(883712800000));
 }
 
 function dom_hideLoadingIndicator(){
@@ -151,11 +130,11 @@ function dom_CreateMap(){
     path = d3.geo.path()
         .projection(projection);
 
-    svg = d3.select("body").append("svg")
+    svg = d3.select("#container").append("svg")
         .attr("width", width)
         .attr("height", height);
 
-    var div = d3.select("body").append("div")
+    div = d3.select("#container").append("div")
         .attr("class", "tooltip")
         .style("opacity", 0);
 
@@ -184,8 +163,8 @@ function dom_CreateMap(){
                     .duration(1)
                     .style("opacity", .9);
                 div .html(d.properties.name + "<br/> Total # of militarized assets: "  + dynamicCounts[d.properties.name].D)
-                    .style("left", (d3.event.pageX) + "px")
-                    .style("top", (d3.event.pageY - 28) + "px");
+                    .style("left", (d3.event.pageX - 88) + "px")
+                    .style("top", (d3.event.pageY - 58) + "px");
             })
             .on("mouseout", function(d) {
                 div.transition()
@@ -260,36 +239,48 @@ function dom_createCounties(state_name){
     });
 }
 
-function dom_clear_set_state_fill(state){
+function dom_setSelectedStateStroke(state){
     g.selectAll("path").transition()
         .duration(450)
-        .style("fill", function (d) {
-            if (d.id == state.id) return "#FFFFFF";
-            else return "#CCCCCC"
+        .style("stroke", function (d) {
+            if (d.id == state.id) return "#84C8CC";
+            else return "rgba(170, 170, 144, 0.27)";
+        })
+        .style("stroke-width", function(d) {
+            if (d.id == state.id) return "4px";
+            else return "2px";
         });
 }
 
-function dom_set_overview_state_fill(){
+function dom_setOverviewStateStrokeAndFill(){
     g.selectAll("path").transition()
         .duration(450)
         .style("fill", function(d) {
             var value = dynamicCounts[d.properties.name].D;
             return "rgba(173, 15, 15, " + value / 10000 + ")";
         })
+        .style("stroke", function (d) {
+            return "rgba(170, 170, 144, 0.27)";
+        })
+        .style("stroke-width", function(d) {
+            return "2px";
+        });
 }
 
 function dom_updateInformationForState(state){
-    $('#InfoBarTitle').empty();
-    var stateName = "";
-    for(var i = 0; i < _state_abbr.length; ++i){
-        if (state == _state_abbr[i].abbreviation){
-            stateName = _state_abbr[i].name;
-            break;
+    if(!bInEventView) {
+        $('#InfoBarTitle').empty();
+        var stateName = "";
+        for (var i = 0; i < _state_abbr.length; ++i) {
+            if (state == _state_abbr[i].abbreviation) {
+                stateName = _state_abbr[i].name;
+                break;
+            }
         }
+        $('#InfoBarTitle').html(stateName);
+        $('#ChangingInformation').empty();
+        $('#ChangingInformation').html("Welcome to " + stateName + ". Where the total number of militarized assets is: " + _data_overviewCounts[state].D + ". All states show an increase in assets over time and seem to have a large jump between 2005 and 2006. It's possible that the database became used more religiously around that time to cause such a jump across the country.")
     }
-    $('#InfoBarTitle').html(stateName);
-    $('#ChangingInformation').empty();
-    $('#ChangingInformation').html("Welcome to " + stateName + ". Where the total number of militarized assets is: "+ _data_overviewCounts[state].D + ". All states show an increase in assets over time and seem to have a large jump between 2005 and 2006. It's possible that the database became used more religiously around that time to cause such a jump across the country.")
 }
 
 function dom_updateInformationForOverview(){
@@ -313,12 +304,12 @@ function dom_updateInformationForEvent(eventName) {
 
             $('#LinksAndVideos').empty();
             if(_important_dates[i].link){
-                $('#LinksAndVideos').append("<iframe width='380' height='300' src='" + _important_dates[i].link + "'></iframe>");
+                $('#LinksAndVideos').append("<iframe width='400' height=350; src='" + _important_dates[i].link + "'></iframe>");
             }
 
             if(_important_dates[i].video){
                 var url = _important_dates[i].video;
-                $('#LinksAndVideos').append("<iframe width='380' height='300' src='" + url + "'frameborder='0' allowfullscreen></iframe>");
+                $('#LinksAndVideos').append("<iframe width='400' height=350; src='" + url + "'frameborder='0' allowfullscreen></iframe>");
             }
             break;
         }
@@ -327,14 +318,16 @@ function dom_updateInformationForEvent(eventName) {
     var startDate = Date.parse(eventDate) - 3 * 2629743000;
     var endDate = Date.parse(eventDate) + 3 * 2629743000;
 
-    $("#to").datepicker('setDate', new Date(endDate));
-    $("#from").datepicker('setDate', new Date(startDate));
+    $("#slider").dateRangeSlider("min", new Date(startDate));
+    $("#slider").dateRangeSlider("max", new Date(endDate));
 
-    startDate = $('#from').val();
-    endDate = $('#to').val();
+    var dateValues = $("#slider").dateRangeSlider("values");
+    startDate = dateValues.min.getFullYear()  + '-' +  (dateValues.min.getMonth() + 1) + '-' + dateValues.min.getDate();
+    endDate = dateValues.max.getFullYear() + '-' + (dateValues.max.getMonth() + 1) + '-' + dateValues.max.getDate();
 
     //Change Graphs for event
-    dynamicCounts = updateCountsByDate(endDate);
+    dynamicCounts = updateCountsByDate(Date.parse(endDate));
+    bInEventView = true;
     if(bInStateView){
         makeCountsObjectForOverviewGraph(startDate, "year", endDate);
          var d = _state_;
@@ -343,7 +336,7 @@ function dom_updateInformationForEvent(eventName) {
             bInStateView = true;
             state = d;
             _state_ = state;
-            dom_clear_set_state_fill(state);
+            dom_setSelectedStateStroke(state);
             setTimeout(function(d){
                 dom_createDateFilteredStateGraph(state.properties.name);
             }, 200);
@@ -437,6 +430,7 @@ function event_onLinkClicked(e){
 function event_onEventClicked(e){
     var selectedButtonName = e.target.id;
     dom_updateInformationForEvent(selectedButtonName);
+    dom_showOverviewButton();
 }
 
 function event_stateClicked(d) {
@@ -446,7 +440,7 @@ function event_stateClicked(d) {
         bInStateView = true;
         state = d;
         _state_ = state;
-        dom_clear_set_state_fill(state);
+        dom_setSelectedStateStroke(state);
         setTimeout(function(d){
             dom_createDateFilteredStateGraph(state.properties.name);
         }, 200);
@@ -460,10 +454,14 @@ function event_stateClicked(d) {
 
 function event_backToOverview(){
     bInStateView = false;
+    bInEventView = false;
     dom_hideOverviewButton();
-    dom_set_overview_state_fill();
-    var startDate = $('#from').val();
-    var endDate = $('#to').val();
+    var dateValues = $("#slider").dateRangeSlider("values");
+    var startDate = dateValues.min.getFullYear()  + '-' +  (dateValues.min.getMonth() + 1) + '-' + dateValues.min.getDate();
+    var endDate = dateValues.max.getFullYear() + '-' + (dateValues.max.getMonth() + 1) + '-' + dateValues.max.getDate();
+    dynamicCounts = updateCountsByDate(Date.parse(endDate));
+    dom_setOverviewStateStrokeAndFill();
+    $('#LinksAndVideos').empty();
     dom_createDateFilteredUSGraph(startDate, endDate, "year");
     dom_updateInformationForOverview();
 }
@@ -675,6 +673,23 @@ function dom_makeGraph(dateData, graphTitle){
             .on("mouseout", function() { focus.style("display", "none"); })
             .on("mousemove", mousemove);
 
+        svgGraph.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("x", margin.top - (height / 4))
+            .attr("dy", ".71em")
+            .style("text-anchor", "end")
+            .attr("class", "shadow")
+            .text("Military Asset Count");
+
+        svgGraph.append("text")
+            .attr("y", height - 20)
+            .attr("x", 50)
+            .attr("dy", ".71em")
+            .style("text-anchor", "end")
+            .attr("class", "shadow")
+            .text("Date");
+
         function mousemove() {
             var x0 = x.invert(d3.mouse(this)[0]),
                 i = bisectDate(data, x0, 1),
@@ -688,29 +703,25 @@ function dom_makeGraph(dateData, graphTitle){
                     y(d.close) + ")");
 
             focus.select("text.y1")
-                .attr("transform",
-                    "translate(" + x(d.date - d.date/10) + "," +
-                    y(d.close) + ")")
-                .text(d.close);
+                .attr("y", height - 20)
+                .attr("x", 280)
+                .text("Count: " + d.close);
 
             focus.select("text.y2")
-                .attr("transform",
-                    "translate(" + x(d.date - d.date/10) + "," +
-                    y(d.close) + ")")
-                .text(d.close);
+                .attr("y", height - 20)
+                .attr("x", 280)
+                .text("Count: " + d.close);
 
             var theDate = new Date(d.date);
             focus.select("text.y3")
-                .attr("transform",
-                    "translate(" + x(d.date - d.date/10) + "," +
-                    y(d.close) + ")")
-                .text(theDate.toLocaleDateString('en-US', {'year': 'numeric'}));
+                .attr("y", height - 20)
+                .attr("x", 280)
+                .text("Date: " + theDate.toLocaleDateString());
 
             focus.select("text.y4")
-                .attr("transform",
-                    "translate(" + x(d.date - d.date/10) + "," +
-                    y(d.close) + ")")
-                .text(theDate.toLocaleDateString('en-US', {'year': 'numeric'}));
+                .attr("y", height - 20)
+                .attr("x", 280)
+                .text("Date: " + theDate.toLocaleDateString());
 
             focus.select(".x")
                 .attr("transform",
@@ -815,11 +826,13 @@ var _important_dates = [
     {
         "title": "Treyvon Martin Shooting",
         "description": "Even though, this is not directly associated with police departments, you can analyze the effects of previous or post transgressions on police departments across the country.",
+        "link": "http://www.cnn.com/2013/06/05/us/trayvon-martin-shooting-fast-facts/",
         "date": "2012-02-26"
     },
     {
         "title": "George Zimmerman Acquittal",
         "description": "Even though, this is not directly associated with police departments, you can analyze the effects of the acquittal on police departments across the country.",
+        "link": "http://www.nytimes.com/2013/07/14/us/george-zimmerman-verdict-trayvon-martin.html?_r=0",
         "date": "2013-07-13",
     },
 ];
